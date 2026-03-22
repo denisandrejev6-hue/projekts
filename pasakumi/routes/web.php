@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PasakumuController;
+use App\Http\Controllers\TelpasController;
+use App\Http\Controllers\LietotajuController;
+use App\Http\Controllers\RezervesKopijuController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\KategorijuController;
+use App\Http\Controllers\JaunumiController;
+
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/', function () {
+    $jaunumi = \App\Models\Jaunumi::orderBy('publicets_datums', 'desc')->take(3)->get();
+    $pasakumi = \App\Models\Pasakumi::with('images')->orderBy('ID', 'desc')->take(3)->get();
+    return view('Home', ['jaunumi' => $jaunumi, 'pasakumi' => $pasakumi]);
+})->middleware('auth');
+
+// resursa maršruti pasākumiem (līdzīgi vecajai DataController funkcionalitātei)
+Route::resource('pasakumi', PasakumuController::class)->middleware(['auth', 'role:Admin,Darbinieks,Lietotajs']);
+Route::delete('pasakumi/{pasakumi}/images/{image}', [PasakumuController::class, 'deleteImage'])->middleware(['auth', 'role:Admin,Darbinieks'])->name('pasakumi.deleteImage');
+
+// papildu resursi citām tabulām
+Route::resource('telpas', TelpasController::class)->middleware(['auth', 'role:Admin,Darbinieks,Lietotajs']);
+Route::resource('lietotaji', LietotajuController::class)->middleware(['auth', 'role:Admin,Darbinieks']);
+Route::resource('rezerveskopijas', RezervesKopijuController::class)->middleware(['auth', 'role:Admin,Darbinieks']);
+Route::resource('kategorijas', KategorijuController::class)->middleware(['auth', 'role:Admin,Darbinieks']);
+Route::resource('jaunumi', JaunumiController::class)->middleware(['auth', 'role:Admin,Darbinieks']);
+Route::delete('jaunumi/{jaunumi}/images/{image}', [JaunumiController::class, 'deleteImage'])->middleware(['auth', 'role:Admin,Darbinieks'])->name('jaunumi.deleteImage');
