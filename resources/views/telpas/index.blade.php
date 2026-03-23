@@ -28,11 +28,15 @@
                     <td style="text-align:center;">{{ $item->nosaukums }}</td>
                     <td style="text-align:center;">{{ $item->ietilpiba }}</td>
                     @if(auth()->user()->loma !== 'Lietotajs')
-                        <td style="text-align:center;">
-                            <a href="{{ route('telpas.show', $item->ID) }}" class="btn secondary">Detalizēti</a>
-                        </td>
+                    <div style="display:flex; gap:12px; margin-top:24px;">
+                    <a href="{{ route('telpas.edit', $data->ID) }}" class="btn">Rediģēt</a>
+                        <form action="{{ route('telpas.destroy', $data->ID) }}" method="POST" onsubmit="return confirm('Vai tiešām dzēst?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn secondary">Dzēst</button>
+                        </form>
                     @endif
-                </tr>
+                    </tr>
             @endforeach
         </tbody>
     </table>
