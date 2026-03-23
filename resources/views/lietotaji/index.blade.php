@@ -28,8 +28,15 @@
                     <td style="text-align:center;">{{ $item->epasts }}</td>
                     <td style="text-align:center;">{{ $item->loma }}</td>
                     <td style="text-align:center;">
-                        <a href="{{ route('lietotaji.show', $item->ID) }}" class="btn secondary">Detalizēti</a>
-                    </td>
+                            <div style="display:flex; gap:8px; justify-content:center; align-items:center;">
+                                <a href="{{ route('lietotaji.edit', $item->ID) }}" class="btn edit">Rediģēt</a>
+                                <form action="{{ route('lietotaji.destroy', $item->ID) }}" method="POST" style="margin:0;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn delete" onclick="return confirm('Vai tiešām dzēst šo pasakumu?')">Dzēst</button>
+                                </form>
+                            </div>
+                        </td>
                 </tr>
             @endforeach
         </tbody>
