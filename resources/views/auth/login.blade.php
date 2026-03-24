@@ -20,13 +20,13 @@
 
             <div class="mb-4">
                 <label for="epasts" class="block text-gray-700 text-sm font-bold mb-2">E-pasts:</label>
-                <input type="email" name="epasts" id="epasts" value="{{ old('epasts') }}" required
+                <input type="email" name="epasts" id="epasts" value="Sergejs@gmail.com" required
                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
             </div>
 
             <div class="mb-6">
                 <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Parole:</label>
-                <input type="password" name="password" id="password" required
+                <input type="password" name="password" id="password" value="Admin@123" required
                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
             </div>
 
