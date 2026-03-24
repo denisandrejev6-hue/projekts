@@ -341,10 +341,6 @@ button:hover, .btn:hover {
         </div>
     @endif
 </div>
-  @else
-    <a href="/login" class="btn">Ielogoties</a>
-  @endif
-</div>
   </header>
 
   <main class="container" style="display:flex; gap:24px;">
