@@ -29,6 +29,28 @@ class AuthController extends Controller
         ]);
     }
 
+    public function showRegistrationForm()
+    {
+        return view('auth.register');
+    }
+
+    public function register(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'epasts' => 'required|string|email|max:255|unique:lietotaji',
+            'password' => 'required|string|confirmed|min:8',
+        ]);
+
+        $user = \App\Models\Lietotaji::create($validated);
+
+        Auth::login($user);
+
+        return redirect()->intended('/');
+    }
+
+    
+
     public function logout(Request $request)
     {
         Auth::logout();
@@ -36,4 +58,5 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         return redirect('/');
     }
-}
+
+    }
