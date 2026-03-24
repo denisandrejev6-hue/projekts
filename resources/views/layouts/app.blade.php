@@ -322,18 +322,25 @@ button:hover, .btn:hover {
       @endauth
     </div>
 
- <!-- kreisajā augšējā stūrī izveidojam kastīti, kurā parādās lietotāja vārds, uzvārds un loma un poga izrakstities\ielogoties -->
+ <!-- kreisajā augšējā stūrī kastītis, kurā parādās lietotāja vārds, uzvārds un loma un poga izrakstities\ielogoties -->
 <div class="auth-container">
-  @if(auth()->check())
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <span style="margin-right: 10px;">
-    {{ auth()->user()->vards }} {{ auth()->user()->uzvards }} ({{ auth()->user()->loma }})
-    </span>
-      <form method="POST" action="/logout" style="display:inline">
-        @csrf
-        <button class="btn secondary" type="submit">Izrakstīties</button>
-      </form>
-    </div>
+    @if(auth()->check())
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="margin-right: 10px;">
+                {{ auth()->user()->vards }} {{ auth()->user()->uzvards }} ({{ auth()->user()->loma }})
+            </span>
+            <form method="POST" action="/logout" style="display:inline">
+                @csrf
+                <button class="btn secondary" type="submit">Izrakstīties</button>
+            </form>
+        </div>
+    @else
+        <div style="display: flex; gap: 10px;">
+            <a href="/login" class="btn">Ielogoties</a>
+            <a href="/register" class="btn primary">Reģistrēties</a>
+        </div>
+    @endif
+</div>
   @else
     <a href="/login" class="btn">Ielogoties</a>
   @endif
