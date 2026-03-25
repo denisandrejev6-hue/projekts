@@ -111,26 +111,28 @@
         </div>
 
         <div class="form-row" style="margin-bottom:32px;">
-            <div class="form-group">
-                <label>Darbinieks <span class="required-star">*</span></label>
-                @if(auth()->user()->loma === 'Darbinieks')
-                    <input type="text" value="{{ auth()->user()->vards }}" class="form-control" disabled>
-                    <input type="hidden" name="darbinieks_id" value="{{ auth()->user()->ID }}">
-                @else
-                    <select name="darbinieks_id" class="form-control @error('darbinieks_id') is-invalid @enderror">
-                        <option value="">-- Izvēlieties darbinieku --</option>
-                        @foreach($darbinieki as $d)
-                            <option value="{{ $d->ID }}" {{ old('darbinieks_id') == $d->ID ? 'selected' : '' }}>
-                                {{ $d->vards }}
-                            </option>
-                        @endforeach
-                    </select>
-                @endif
+           <div class="form-group">
+    <label>Darbinieks</label>
+    <select name="darbinieks_id" class="form-control">
+        <option value="">-- Izvēlieties darbinieku --</option>
+        @foreach($darbinieki as $d)
+            <option value="{{ $d->ID }}">{{ $d->vards }} {{ $d->uzvards }}</option>
+        @endforeach
+    </select>
+</div>
 
-                @error('darbinieks_id')
-                    <span class="invalid-feedback">{{ $message }}</span>
-                @enderror
-            </div>
+<div class="form-group">
+    <label>Telpa</label>
+    <select name="telpa_id" class="form-control">
+        <option value="">-- Izvēlieties telpu --</option>
+        @foreach($telpas as $t)
+            <option value="{{ $t->ID }}">
+                {{ $t->nosaukums }} (ietilpība: {{ $t->ietilpiba }})
+            </option>
+        @endforeach
+    </select>
+</div>
+        </div>
 
             <div class="form-group">
     <label>Telpa <span class="required-star">*</span></label>

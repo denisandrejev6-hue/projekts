@@ -8,7 +8,6 @@ class Pasakumi extends Model
 {
     protected $table = 'pasakumi';
     protected $primaryKey = 'ID';
-    public $incrementing = true;
     public $timestamps = false;
 
     protected $fillable = [
@@ -16,13 +15,13 @@ class Pasakumi extends Model
         'kategorija',
         'datums_no',
         'datums_lidz',
-        'laiks_no',
-        'laiks_lidz',
-        'registracijas_beigu_datums',
-        'registracijas_beigu_laiks',
+        'sakuma_laiks',
+        'beigu_laiks',
         'apraksts',
         'darbinieks_id',
         'telpa_id',
+        'registracijas_beigu_datums',
+        'registracijas_beigu_laiks',
     ];
 
     public function images()

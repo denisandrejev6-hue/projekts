@@ -11,18 +11,15 @@ class Lietotajs extends Authenticatable
 
     protected $table = 'lietotaji';
     protected $primaryKey = 'ID';
-    public $incrementing = true;
     public $timestamps = false;
 
     protected $fillable = [
         'vards',
         'uzvards',
-        'loma',
         'epasts',
+        'loma',
         'parole',
-        'registracijas_statuss',
-        'apstiprinaja_id',
-        'apstiprinats_at',
+        'aktivs',
     ];
 
     protected $hidden = [
@@ -30,14 +27,14 @@ class Lietotajs extends Authenticatable
         'remember_token',
     ];
 
-    public function getAuthPassword(): string
+    public function getAuthPassword()
     {
         return $this->parole;
     }
 
     public function irApstiprinats(): bool
     {
-        return $this->registracijas_statuss === 'Apstiprinats';
+        return (int)$this->aktivs === 1;
     }
 
     public function pieteikumi()
@@ -48,10 +45,5 @@ class Lietotajs extends Authenticatable
     public function atsauksmes()
     {
         return $this->hasMany(PasakumuAtsauksme::class, 'lietotajs_id', 'ID');
-    }
-
-    public function apstiprinatajs()
-    {
-        return $this->belongsTo(self::class, 'apstiprinaja_id', 'ID');
     }
 }

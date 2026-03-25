@@ -1,11 +1,11 @@
-{{-- resources/views/edit.blade.php --}}
 @extends('layouts.app')
-@php
-    use Illuminate\Support\Facades\Storage;
-@endphp
+@php use Illuminate\Support\Facades\Storage; @endphp
 
 @section('content')
-    <h1>Labot pasakumu datus</h1>
+<div class="pasakumi-container">
+    <div class="page-heading">
+        <h1>Labot pasākumu</h1>
+    </div>
 
     @if ($errors->any())
         <div class="flash flash-error">
@@ -17,113 +17,145 @@
         </div>
     @endif
 
-    <form action="{{ route('pasakumi.update', $item->ID) }}" method="POST" enctype="multipart/form-data" style="max-width:800px;">
+    <form action="{{ route('pasakumi.update', $item->ID) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
-        
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
-            <div class="form-control">
-                <label style="font-weight:700; display:block; margin-bottom:8px;">Nosaukums:</label>
-                <input type="text" name="nosaukums" value="{{ old('nosaukums', $item->nosaukums) }}" style="width:90%; padding:10px; border-radius:6px; border:1px solid #ddd;">
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Nosaukums</label>
+                <input type="text" name="nosaukums" value="{{ old('nosaukums', $item->nosaukums) }}" class="form-control" required>
             </div>
-            <div class="form-control">
-                <label style="font-weight:700; display:block; margin-bottom:8px;">Kategorija:</label>
-                <input type="text" name="kategorija" value="{{ old('kategorija', $item->kategorija) }}" style="width:90%; padding:10px; border-radius:6px; border:1px solid #ddd;">
-            </div>
-        </div>
-        
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
-            <div class="form-control">
-                <label style="font-weight:700; display:block; margin-bottom:8px;">Datums no:</label>
-                <input type="date" name="datums_no" value="{{ old('datums_no', $item->datums_no) }}" style="width:90%; padding:10px; border-radius:6px; border:1px solid #ddd;">
-            </div>
-            <div class="form-control">
-                <label style="font-weight:700; display:block; margin-bottom:8px;">Datums līdz:</label>
-                <input type="date" name="datums_lidz" value="{{ old('datums_lidz', $item->datums_lidz) }}" style="width:90%; padding:10px; border-radius:6px; border:1px solid #ddd;">
+
+            <div class="form-group">
+                <label>Kategorija</label>
+                <input type="text" name="kategorija" value="{{ old('kategorija', $item->kategorija) }}" class="form-control" required>
             </div>
         </div>
-        
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
-            <div class="form-control">
-                <label style="font-weight:700; display:block; margin-bottom:8px;">Sākuma laiks:</label>
-                <input type="time" name="laiks_no" value="{{ old('laiks_no', $item->laiks_no) }}" style="width:90%; padding:10px; border-radius:6px; border:1px solid #ddd;">
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Datums no</label>
+                <input type="date" name="datums_no" value="{{ old('datums_no', $item->datums_no) }}" class="form-control" required>
             </div>
-            <div class="form-control">
-                <label style="font-weight:700; display:block; margin-bottom:8px;">Beigu laiks:</label>
-                <input type="time" name="laiks_lidz" value="{{ old('laiks_lidz', $item->laiks_lidz) }}" style="width:90%; padding:10px; border-radius:6px; border:1px solid #ddd;">
-            </div>
-        </div>
-        
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
-            <div class="form-control">
-                <label style="font-weight:700; display:block; margin-bottom:8px;">Reģistrācijas beigu datums:</label>
-                <input type="date" name="registracijas_beigu_datums" value="{{ old('registracijas_beigu_datums', $item->registracijas_beigu_datums) }}" style="width:90%; padding:10px; border-radius:6px; border:1px solid #ddd;">
-            </div>
-            <div class="form-control">
-                <label style="font-weight:700; display:block; margin-bottom:8px;">Reģistrācijas beigu laiks:</label>
-                <input type="time" name="registracijas_beigu_laiks" value="{{ old('registracijas_beigu_laiks', $item->registracijas_beigu_laiks) }}" style="width:90%; padding:10px; border-radius:6px; border:1px solid #ddd;">
+
+            <div class="form-group">
+                <label>Datums līdz</label>
+                <input type="date" name="datums_lidz" value="{{ old('datums_lidz', $item->datums_lidz) }}" class="form-control" required>
             </div>
         </div>
-        
-        <div class="form-control" style="margin-bottom:16px;">
-            <label style="font-weight:700; display:block; margin-bottom:8px;">Apraksts:</label>
-            <textarea name="apraksts" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ddd; min-height:80px;">{{ old('apraksts', $item->apraksts) }}</textarea>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Sākuma laiks</label>
+                <select name="sakuma_laiks" class="form-control" required>
+                    @for($h = 0; $h < 24; $h++)
+                        @for($m = 0; $m < 60; $m += 15)
+                            @php $time = sprintf('%02d:%02d', $h, $m); @endphp
+                            <option value="{{ $time }}" {{ old('sakuma_laiks', \Carbon\Carbon::parse($item->sakuma_laiks)->format('H:i')) == $time ? 'selected' : '' }}>
+                                {{ $time }}
+                            </option>
+                        @endfor
+                    @endfor
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Beigu laiks</label>
+                <select name="beigu_laiks" class="form-control" required>
+                    @for($h = 0; $h < 24; $h++)
+                        @for($m = 0; $m < 60; $m += 15)
+                            @php $time = sprintf('%02d:%02d', $h, $m); @endphp
+                            <option value="{{ $time }}" {{ old('beigu_laiks', \Carbon\Carbon::parse($item->beigu_laiks)->format('H:i')) == $time ? 'selected' : '' }}>
+                                {{ $time }}
+                            </option>
+                        @endfor
+                    @endfor
+                </select>
+            </div>
         </div>
-        
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
-            <div class="form-control">
-                <label style="font-weight:700; display:block; margin-bottom:8px;">Darbinieks:</label>
-                <select name="darbinieks_id" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ddd; background:white;">
-                    <option value="">-- izvēlieties darbinieku --</option>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Reģistrācijas beigu datums</label>
+                <input type="date" name="registracijas_beigu_datums" value="{{ old('registracijas_beigu_datums', $item->registracijas_beigu_datums) }}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Reģistrācijas beigu laiks</label>
+                <select name="registracijas_beigu_laiks" class="form-control">
+                    <option value="">-- Izvēlieties --</option>
+                    @for($h = 0; $h < 24; $h++)
+                        @for($m = 0; $m < 60; $m += 15)
+                            @php $time = sprintf('%02d:%02d', $h, $m); @endphp
+                            <option value="{{ $time }}"
+                                {{ old('registracijas_beigu_laiks', $item->registracijas_beigu_laiks ? \Carbon\Carbon::parse($item->registracijas_beigu_laiks)->format('H:i') : '') == $time ? 'selected' : '' }}>
+                                {{ $time }}
+                            </option>
+                        @endfor
+                    @endfor
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:20px;">
+            <label>Apraksts</label>
+            <textarea name="apraksts" class="form-control">{{ old('apraksts', $item->apraksts) }}</textarea>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Atbildīgais darbinieks</label>
+                <select name="darbinieks_id" class="form-control" required>
+                    <option value="">-- Izvēlieties darbinieku --</option>
                     @foreach($darbinieki as $d)
-                        <option value="{{ $d->ID }}" {{ old('darbinieks_id', $item->darbinieks_id) == $d->ID ? 'selected' : '' }}>{{ $d->vards }}</option>
+                        <option value="{{ $d->ID }}" {{ old('darbinieks_id', $item->darbinieks_id) == $d->ID ? 'selected' : '' }}>
+                            {{ $d->vards }} {{ $d->uzvards }}
+                        </option>
                     @endforeach
                 </select>
             </div>
+
             <div class="form-group">
-    <label>Telpa <span class="required-star">*</span></label>
-    <select name="telpa_id" class="form-control @error('telpa_id') is-invalid @enderror">
-        <option value="">-- Izvēlieties telpu --</option>
-        @foreach($telpas as $t)
-            <option value="{{ $t->ID }}" {{ old('telpa_id') == $t->ID ? 'selected' : '' }}>
-                {{ $t->nosaukums }} (ietilpība: {{ $t->ietilpiba ?? 'nav norādīta' }})
-            </option>
-        @endforeach
-    </select>
-    @error('telpa_id')
-        <span class="invalid-feedback">{{ $message }}</span>
-    @enderror
-</div>
+                <label>Telpa</label>
+                <select name="telpa_id" class="form-control" required>
+                    <option value="">-- Izvēlieties telpu --</option>
+                    @foreach($telpas as $t)
+                        <option value="{{ $t->ID }}" {{ old('telpa_id', $item->telpa_id) == $t->ID ? 'selected' : '' }}>
+                            {{ $t->nosaukums }} (ietilpība: {{ $t->ietilpiba }})
+                        </option>
+                    @endforeach
+                </select>
+            </div>
         </div>
-        
-        <!-- Esošie attēli -->
+
         @if($item->images->count() > 0)
-            <div style="margin-bottom:16px;">
-                <label style="font-weight:700; display:block; margin-bottom:8px;">Esošie attēli:</label>
-                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            <div class="form-group" style="margin-bottom:20px;">
+                <label>Esošie attēli</label>
+                <div style="display:flex; flex-wrap:wrap; gap:12px;">
                     @foreach($item->images as $image)
                         <div style="position:relative;">
-                            <img src="{{ Storage::url($image->image_path) }}" alt="Attēls" style="width:100px; height:100px; object-fit:cover; border-radius:6px;">
-                            <form action="{{ route('pasakumi.deleteImage', [$item->ID, $image->id]) }}" method="POST" style="position:absolute; top:0; right:0;">
+                            <img src="{{ Storage::url($image->image_path) }}" alt="Attēls"
+                                 style="width:100px;height:100px;object-fit:cover;border-radius:10px;">
+                            <form action="{{ route('pasakumi.deleteImage', [$item->ID, $image->id]) }}" method="POST" style="position:absolute;top:0;right:0;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" style="background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer;" onclick="return confirm('Vai tiešām vēlaties dzēst šo attēlu?')">×</button>
+                                <button type="submit" style="background:red;color:white;border:none;border-radius:50%;width:24px;height:24px;">×</button>
                             </form>
                         </div>
                     @endforeach
                 </div>
             </div>
         @endif
-        
-        <!-- Jauni attēli -->
-        <div style="margin-bottom:16px;">
-            <label style="font-weight:700; display:block; margin-bottom:8px;">Pievienot jaunus attēlus (maksimums {{ 10 - $item->images->count() }}):</label>
-            <input type="file" name="images[]" multiple accept="image/*" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ddd;">
+
+        <div class="form-group" style="margin-bottom:24px;">
+            <label>Pievienot jaunus attēlus</label>
+            <input type="file" name="images[]" multiple accept="image/*" class="form-control">
         </div>
-        
-        <div style="display:flex; gap:12px;">
-            <button type="submit" class="btn" style="background:#4CAF50; color:white; padding:12px 24px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Atjaunināt</button>
-            <a href="{{ url()->previous() }}" class="btn secondary" style="background:#f44336; color:white; padding:12px 24px; border-radius:6px; text-decoration:none; font-weight:600;">Atcelt</a>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">Saglabāt izmaiņas</button>
         </div>
     </form>
+</div>
 @endsection

@@ -10,6 +10,7 @@ use App\Http\Controllers\PasakumuController;
 use App\Http\Controllers\RezervesKopijuController;
 use App\Http\Controllers\TelpasController;
 
+
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
@@ -29,7 +30,7 @@ Route::delete('pasakumi/{pasakumi}/images/{image}', [PasakumuController::class, 
 
 Route::post('pasakumi/{id}/pieteikties', [PasakumuController::class, 'pieteikties'])
     ->middleware(['auth', 'role:Admin,Darbinieks,Lietotajs'])
-    ->name('pasakumi.pieteikties');
+    ->name('pasakumi.pieteikties');  
 
 Route::post('pasakumi/{id}/atsauksme', [PasakumuController::class, 'saglabatAtsauksmi'])
     ->middleware(['auth', 'role:Admin,Darbinieks,Lietotajs'])
