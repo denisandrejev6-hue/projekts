@@ -80,17 +80,20 @@
                     @endforeach
                 </select>
             </div>
-            <div class="form-control">
-                <label style="font-weight:700; display:block; margin-bottom:8px;">Telpa:</label>
-                <select name="telpa_id" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ddd; background:white;">
-                    <option value="">-- izvēlieties telpu --</option>
-                    @foreach($telpas as $t)
-                       <option value="{{ $t->ID }}" {{ old('telpa_id', $item->telpa_id) == $t->ID ? 'selected' : '' }}>
-                            {{ $t->nosaukums }} (ietilpība: {{ $t->ietilpiba ?? $t->ietilpība ?? 'nav norādīta' }})
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+            <div class="form-group">
+    <label>Telpa <span class="required-star">*</span></label>
+    <select name="telpa_id" class="form-control @error('telpa_id') is-invalid @enderror">
+        <option value="">-- Izvēlieties telpu --</option>
+        @foreach($telpas as $t)
+            <option value="{{ $t->ID }}" {{ old('telpa_id') == $t->ID ? 'selected' : '' }}>
+                {{ $t->nosaukums }} (ietilpība: {{ $t->ietilpiba ?? 'nav norādīta' }})
+            </option>
+        @endforeach
+    </select>
+    @error('telpa_id')
+        <span class="invalid-feedback">{{ $message }}</span>
+    @enderror
+</div>
         </div>
         
         <!-- Esošie attēli -->

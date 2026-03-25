@@ -18,6 +18,8 @@
                 <th style="text-align:center;">E-pasts</th>
                 <th style="text-align:center;">Loma</th>
                 <th style="text-align:center;">Darbības</th>
+                <th style="text-align:center;">Reģistrācijas statuss</th>
+                <th style="text-align:center;">Darbības</th>
             </tr>
         </thead>
         <tbody>
@@ -27,6 +29,23 @@
                     <td style="text-align:center;">{{ $item->uzvards }}</td>
                     <td style="text-align:center;">{{ $item->epasts }}</td>
                     <td style="text-align:center;">{{ $item->loma }}</td>
+                    <td>{{ $item->registracijas_statuss ?? 'Neapstiprinats' }}</td>
+
+<td style="display:flex; gap:8px; flex-wrap:wrap;">
+    @if(($item->registracijas_statuss ?? 'Neapstiprinats') !== 'Apstiprinats')
+        <form action="{{ route('lietotaji.apstiprinat', $item->ID) }}" method="POST">
+            @csrf
+            <button type="submit" class="btn btn-sm">Apstiprināt</button>
+        </form>
+    @endif
+
+    @if(($item->registracijas_statuss ?? 'Neapstiprinats') !== 'Noraidits')
+        <form action="{{ route('lietotaji.noraidit', $item->ID) }}" method="POST">
+            @csrf
+            <button type="submit" class="btn secondary btn-sm">Noraidīt</button>
+        </form>
+    @endif
+</td>
                     <td style="text-align:center;">
                             <div style="display:flex; gap:8px; justify-content:center; align-items:center;">
                                 <a href="{{ route('lietotaji.edit', $item->ID) }}" class="btn edit">Rediģēt</a>

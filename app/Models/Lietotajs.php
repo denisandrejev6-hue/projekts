@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -10,7 +9,6 @@ class Lietotajs extends Authenticatable
 {
     use Notifiable;
 
-    // actual database table uses plural form
     protected $table = 'lietotaji';
     protected $primaryKey = 'ID';
     public $incrementing = true;
@@ -21,9 +19,10 @@ class Lietotajs extends Authenticatable
         'uzvards',
         'loma',
         'epasts',
-        'email',
         'parole',
-        'password',
+        'registracijas_statuss',
+        'apstiprinaja_id',
+        'apstiprinats_at',
     ];
 
     protected $hidden = [
@@ -31,11 +30,28 @@ class Lietotajs extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * Override the default password field name for Laravel auth.
-     */
     public function getAuthPassword(): string
     {
         return $this->parole;
+    }
+
+    public function irApstiprinats(): bool
+    {
+        return $this->registracijas_statuss === 'Apstiprinats';
+    }
+
+    public function pieteikumi()
+    {
+        return $this->hasMany(PasakumuPieteikums::class, 'lietotajs_id', 'ID');
+    }
+
+    public function atsauksmes()
+    {
+        return $this->hasMany(PasakumuAtsauksme::class, 'lietotajs_id', 'ID');
+    }
+
+    public function apstiprinatajs()
+    {
+        return $this->belongsTo(self::class, 'apstiprinaja_id', 'ID');
     }
 }

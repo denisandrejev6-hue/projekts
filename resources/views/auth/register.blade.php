@@ -4,7 +4,7 @@
 <div class="auth-card max-w-md">
     <div class="page-heading text-center">
         <h1>Reģistrēties</h1>
-        <p>Izveidojiet jaunu lietotāja kontu sistēmā.</p>
+        <p>Izveidojiet kontu. Pēc tam profils jāapstiprina administratoram vai darbiniekam.</p>
     </div>
 
     @if ($errors->any())
@@ -21,8 +21,13 @@
         @csrf
 
         <div class="mb-4">
-            <label for="name">Vārds</label>
-            <input type="text" name="name" id="name" value="{{ old('name') }}" required>
+            <label for="vards">Vārds</label>
+            <input type="text" name="vards" id="vards" value="{{ old('vards') }}" required>
+        </div>
+
+        <div class="mb-4">
+            <label for="uzvards">Uzvārds</label>
+            <input type="text" name="uzvards" id="uzvards" value="{{ old('uzvards') }}" required>
         </div>
 
         <div class="mb-4">
@@ -30,7 +35,7 @@
             <input type="email" name="epasts" id="epasts" value="{{ old('epasts') }}" required>
         </div>
 
-        <div class="mb-6">
+        <div class="mb-4">
             <label for="password">Parole</label>
             <input type="password" name="password" id="password" required>
         </div>
@@ -40,9 +45,7 @@
             <input type="password" name="password_confirmation" id="password_confirmation" required>
         </div>
 
-        <div class="flex items-center justify-between">
-            <button type="submit" class="btn">Reģistrēties</button>
-        </div>
+        <button type="submit" class="btn">Reģistrēties</button>
     </form>
 </div>
 @endsection

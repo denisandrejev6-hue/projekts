@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lietotajs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -19,14 +21,26 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt(['epasts' => $credentials['epasts'], 'password' => $credentials['password']])) {
-            $request->session()->regenerate();
-            return redirect()->intended('/');
+        $user = Lietotajs::where('epasts', $credentials['epasts'])->first();
+
+        if (!$user) {
+            return back()->withErrors(['epasts' => 'Nepareizs e-pasts vai parole.'])->withInput();
         }
 
-        return back()->withErrors([
-            'epasts' => __('auth.failed'),
-        ]);
+        if (!Hash::check($credentials['password'], $user->parole)) {
+            return back()->withErrors(['epasts' => 'Nepareizs e-pasts vai parole.'])->withInput();
+        }
+
+        if ($user->registracijas_statuss !== 'Apstiprinats') {
+            return back()->withErrors([
+                'epasts' => 'Jūsu profils vēl nav apstiprināts.',
+            ])->withInput();
+        }
+
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return redirect()->intended('/');
     }
 
     public function showRegistrationForm()
@@ -37,26 +51,33 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'epasts' => 'required|string|email|max:255|unique:lietotaji',
+            'vards' => 'required|string|max:45',
+            'uzvards' => 'required|string|max:45',
+            'epasts' => 'required|string|email|max:255|unique:lietotaji,epasts',
             'password' => 'required|string|confirmed|min:8',
         ]);
 
-        $user = \App\Models\Lietotaji::create($validated);
+        Lietotajs::create([
+            'vards' => $validated['vards'],
+            'uzvards' => $validated['uzvards'],
+            'epasts' => $validated['epasts'],
+            'parole' => Hash::make($validated['password']),
+            'loma' => 'Lietotajs',
+            'registracijas_statuss' => 'Neapstiprinats',
+        ]);
 
-        Auth::login($user);
-
-        return redirect()->intended('/');
+        return redirect()->route('login')->with(
+            'success',
+            'Reģistrācija veiksmīga. Jūsu profils gaida apstiprinājumu.'
+        );
     }
-
-    
 
     public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/');
-    }
 
+        return redirect('/login');
     }
+}

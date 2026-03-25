@@ -6,15 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pasakumi extends Model
 {
-    // table uses legacy schema from your PHP project
     protected $table = 'pasakumi';
     protected $primaryKey = 'ID';
     public $incrementing = true;
-    public $timestamps = false; // nav created_at/updated_at lauku
+    public $timestamps = false;
 
-    /**
-     * The attributes that are mass assignable.
-     */
     protected $fillable = [
         'nosaukums',
         'kategorija',
@@ -29,20 +25,34 @@ class Pasakumi extends Model
         'telpa_id',
     ];
 
-    // relationships
     public function images()
     {
         return $this->hasMany(PasakumiImage::class, 'pasakumi_id', 'ID');
     }
+
     public function telpa()
     {
-        return $this->belongsTo(Telpa::class, 'telpa_id', 'ID');    
-
+        return $this->belongsTo(Telpa::class, 'telpa_id', 'ID');
     }
-    
+
     public function darbinieks()
     {
         return $this->belongsTo(Lietotajs::class, 'darbinieks_id', 'ID');
     }
 
+    public function pieteikumi()
+    {
+        return $this->hasMany(PasakumuPieteikums::class, 'pasakums_id', 'ID');
+    }
+
+    public function atsauksmes()
+    {
+        return $this->hasMany(PasakumuAtsauksme::class, 'pasakums_id', 'ID');
+    }
+
+    public function aktiviePieteikumi()
+    {
+        return $this->hasMany(PasakumuPieteikums::class, 'pasakums_id', 'ID')
+            ->whereIn('statuss', ['Pieteikts', 'Apmeklets']);
+    }
 }
