@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lietotajs;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class LietotajuApstiprinasanasController extends Controller
@@ -14,14 +15,20 @@ class LietotajuApstiprinasanasController extends Controller
         $user->aktivs = 1;
         $user->save();
 
-        Mail::raw(
-            "Sveiki, {$user->vards}! Jūsu profils ir apstiprināts. Tagad varat pieslēgties sistēmai.",
-            function ($message) use ($user) {
-                $message->to($user->epasts)
-                    ->subject('Profils apstiprināts');
-            }
-        );
+        try {
+            Mail::raw(
+                "Sveiki, {$user->vards}! Jūsu profils ir apstiprināts. Tagad varat pieslēgties sistēmai.",
+                function ($message) use ($user) {
+                    $message->to($user->epasts)
+                        ->subject('Profils apstiprināts');
+                }
+            );
 
-        return back()->with('success', 'Lietotājs apstiprināts un e-pasts nosūtīts.');
+            return back()->with('success', 'Lietotājs apstiprināts un e-pasts nosūtīts.');
+        } catch (\Throwable $e) {
+            Log::error('Neizdevās nosūtīt apstiprinājuma e-pastu: ' . $e->getMessage());
+
+            return back()->with('success', 'Lietotājs apstiprināts, bet e-pastu nosūtīt neizdevās.');
+        }
     }
 }
