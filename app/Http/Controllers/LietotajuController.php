@@ -2,100 +2,94 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Lietotajs;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class LietotajuController extends Controller
 {
-    /**
-     * Display a listing of lietotāji.
-     */
     public function index()
     {
-        $items = Lietotajs::orderBy('ID', 'asc')->get();
-        return view('lietotaji.index', ['data' => $items]);
+        $data = Lietotajs::orderBy('ID')->get();
+        return view('lietotaji.index', compact('data'));
     }
 
-    /**
-     * Show the form for creating a new lietotājs.
-     */
     public function create()
     {
         return view('lietotaji.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'vards' => 'required|max:45',
-            'uzvards' => 'required|max:45',
-            'loma'  => 'required|in:Admin,Darbinieks,Lietotajs',
-            'epasts' => 'required|email|unique:lietotaji,epasts',
-            'parole' => 'required|min:8',
+            'vards' => 'required|string|max:45',
+            'uzvards' => 'required|string|max:25',
+            'epasts' => 'required|email|max:50|unique:lietotaji,epasts',
+            'password' => 'required|string|min:8|confirmed',
+            'loma' => 'required|in:Admin,Darbinieks,Lietotajs',
         ]);
 
-        $validated['parole'] = bcrypt($validated['parole']);
+        $hashedPassword = Hash::make($validated['password']);
 
-        $data = new Lietotajs;
-        $data->fill($validated);
-        $data->save();
+        Lietotajs::create([
+            'vards' => $validated['vards'],
+            'uzvards' => $validated['uzvards'],
+            'epasts' => $validated['epasts'],
+            'email' => $validated['epasts'],
+            'loma' => $validated['loma'],
+            'parole' => $hashedPassword,
+            'password' => $hashedPassword,
+            'aktivs' => 1,
+        ]);
 
-        return redirect('/lietotaji')->with('success', 'Dati veiksmīgi saglabāti');
+        return redirect()->route('lietotaji.index')->with('success', 'Lietotājs veiksmīgi pievienots.');
     }
 
-    /**
-     * Display the specified lietotājs.
-     */
-    public function show($id)
-    {
-        $item = Lietotajs::findOrFail($id);
-        return view('lietotaji.details', ['data' => $item]);
-    }
-
-    /**
-     * Show the form for editing the specified lietotājs.
-     */
     public function edit($id)
     {
         $item = Lietotajs::findOrFail($id);
-        return view('lietotaji.edit', ['data' => $item]);
+        return view('lietotaji.edit', compact('item'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
+        $item = Lietotajs::findOrFail($id);
+
         $validated = $request->validate([
-            'vards' => 'required|max:45',
-            'uzvards' => 'required|max:45',
-            'loma'  => 'required|in:Admin,Darbinieks,Lietotajs',
-            'epasts' => 'required|email|unique:lietotaji,epasts,' . $id,
-            'parole' => 'nullable|min:8',
+            'vards' => 'required|string|max:45',
+            'uzvards' => 'required|string|max:25',
+            'epasts' => 'required|email|max:50|unique:lietotaji,epasts,' . $id . ',ID',
+            'loma' => 'required|in:Admin,Darbinieks,Lietotajs',
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        if (!empty($validated['parole'])) {
-            $validated['parole'] = bcrypt($validated['parole']);
-        } else {
-            unset($validated['parole']);
+        $item->vards = $validated['vards'];
+        $item->uzvards = $validated['uzvards'];
+        $item->epasts = $validated['epasts'];
+        $item->email = $validated['epasts'];
+        $item->loma = $validated['loma'];
+
+        if (!empty($validated['password'])) {
+            $hashedPassword = Hash::make($validated['password']);
+            $item->parole = $hashedPassword;
+            $item->password = $hashedPassword;
         }
 
-        $data = Lietotajs::findOrFail($id);
-        $data->fill($validated);
-        $data->save();
+        $item->save();
 
-        return redirect('/lietotaji')->with('success', 'Dati veiksmīgi atjaunoti');
+        return redirect()->route('lietotaji.index')->with('success', 'Lietotājs veiksmīgi atjaunināts.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
-        Lietotajs::findOrFail($id)->delete();
-        return redirect('/lietotaji')->with('success', 'Dati veiksmīgi izdzēsti');
+        $item = Lietotajs::findOrFail($id);
+
+        if ((int)auth()->id() === (int)$item->ID) {
+            return redirect()->route('lietotaji.index')->withErrors(['Nevar dzēst pašam savu kontu.']);
+        }
+
+        $item->delete();
+
+        return redirect()->route('lietotaji.index')->with('success', 'Lietotājs veiksmīgi dzēsts.');
     }
 }
