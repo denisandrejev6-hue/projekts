@@ -531,8 +531,7 @@
             <div class="brand">
                 <div class="brand-mark"></div>
                 <div class="brand-text">
-                    <strong>Bibliotēkas sistēma</strong>
-                    <span>Mūsdienīgs dizains jūsu pārvaldībai</span>
+                    <strong>Bibliotēkas pasākumu uzskaite</strong>
                 </div>
             </div>
 
@@ -583,7 +582,7 @@
 
     <footer class="footer">
         <div class="footer-inner">
-            © {{ date('Y') }} Bibliotēkas sistēma · ziemas paletes dizains
+            © {{ date('Y') }} Bibliotēkas pasākumu uzskaite. Visas tiesības aizsargātas. 
         </div>
     </footer>
 </div>

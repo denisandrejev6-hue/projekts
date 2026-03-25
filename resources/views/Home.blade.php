@@ -8,14 +8,14 @@
 @section('content')
 <div class="hero-panel">
     <h1>Sākumlapa</h1>
-    <p>Jaunākie bibliotēkas jaunumi un pasākumi vienuviet ar tīru, mierīgu un modernu izskatu no jūsu izvēlētās paletes.</p>
+    <p>Jaunākie bibliotēkas jaunumi un pasākumi.</p>
 </div>
 
 <div class="row">
     <div class="col-md-6">
         <div class="page-heading">
             <h2>3 pēdējie jaunumi</h2>
-            <p>Pārskatāms un ērts aktuālās informācijas saraksts.</p>
+            <p>Aktuāla informācija par bibliotēkas jaunumiem un notikumiem.</p>
         </div>
 
         @forelse($jaunumi as $item)
@@ -34,7 +34,7 @@
     <div class="col-md-6">
         <div class="page-heading">
             <h2>3 pēdējie pasākumi</h2>
-            <p>Vizuāli izcelti notikumi ar attēliem un ātru piekļuvi detaļām.</p>
+            <p>Uzziniet par gaidāmajiem pasākumiem un aktivitātēm bibliotēkā.</p>
         </div>
 
         @forelse($pasakumi as $item)
