@@ -1,47 +1,44 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-2xl font-bold text-center mb-6">Pieslēgties</h2>
+<div class="auth-card max-w-md">
+    <div class="page-heading text-center">
+        <h1>Pieslēgties</h1>
+        <p>Ievadiet savus datus, lai piekļūtu sistēmai.</p>
+    </div>
 
-        @if ($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+    @if ($errors->any())
+        <div class="flash flash-error">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
+    <form method="POST" action="{{ route('login') }}">
+        @csrf
 
-            <div class="mb-4">
-                <label for="epasts" class="block text-gray-700 text-sm font-bold mb-2">E-pasts:</label>
-                <input type="email" name="epasts" id="epasts" value="Sergejs@gmail.com" required
-                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            </div>
+        <div class="mb-4">
+            <label for="epasts">E-pasts</label>
+            <input type="email" name="epasts" id="epasts" value="Sergejs@gmail.com" required>
+        </div>
 
-            <div class="mb-6">
-                <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Parole:</label>
-                <input type="password" name="password" id="password" value="Admin@123" required
-                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            </div>
+        <div class="mb-6">
+            <label for="password">Parole</label>
+            <input type="password" name="password" id="password" value="Admin@123" required>
+        </div>
 
-            <div class="flex items-center justify-between">
-                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                    Pieslēgties
-                </button>
-            </div>
-        </form>
+        <div class="flex items-center justify-between">
+            <button type="submit" class="btn">Pieslēgties</button>
+        </div>
+    </form>
+
+    <div class="card" style="margin-top:20px;">
+        <h3>Demo konti</h3>
+        <p><strong>Admins:</strong> Sergejs@gmail.com / Admin@123</p>
+        <p><strong>Lietotājs:</strong> martins@gmail.com / Lietotajs123</p>
     </div>
 </div>
-Admins
-Login: Sergejs@gmail.com
-Password: Admin@123
-Lietotajs
-Login: martins@gmail.com
-Password:Lietotajs123
 @endsection

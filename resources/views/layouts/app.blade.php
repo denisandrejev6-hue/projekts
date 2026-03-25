@@ -1,362 +1,591 @@
 <!doctype html>
 <html lang="lv">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>@yield('title', 'Mana lapa')</title>
-  
-  <style>
-  :root {
-  --clr-bg: #240046;               /* Deep purple background */
-  --clr-indigo: #4B0082;           /* Indigo accent */
-  --clr-french-violet: #5F4B8B;    /* Headings */
-  --clr-bright-pink: #00FFFF;      /* Cyan for text/buttons */
-  --clr-imperial-red: #00CED1;     /* Darker cyan hover */
-  --clr-penn-red: #000080;         /* Navy blue for borders/backgrounds */
-  --clr-text-light: #00FFFF;       /* Main text in cyan */
-  --clr-text-muted: #8BE8FD;       /* Lighter cyan for subtext */
-  --radius: 8px;
-  --transition: 0.3s ease-in-out;
-}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>@yield('title', 'Bibliotēkas sistēma')</title>
 
-body {
-  background-color: var(--clr-bg);
-  color: var(--clr-text-light);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  padding: 0;
-}
+    <style>
+        :root{
+            --c1:#5D455F;
+            --c2:#896F8C;
+            --c3:#A698AE;
+            --c4:#C0B6BF;
+            --c5:#A9A5BA;
+            --c6:#6D7988;
+            --white:#f8f7fb;
+            --text:#241f28;
+            --shadow:0 18px 45px rgba(44,33,47,.16);
+            --radius-xl:24px;
+            --radius-lg:18px;
+            --radius-md:14px;
+            --radius-sm:10px;
+            --border:1px solid rgba(93,69,95,.14);
+        }
 
-h1, h2, h3, h4, h5 {
-  color: var(--clr-french-violet);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  margin: 0 0 8px 0;
-}
+        *{box-sizing:border-box}
+        html{scroll-behavior:smooth}
+        body{
+            margin:0;
+            min-height:100vh;
+            font-family:Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+            color:var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(169,165,186,.45), transparent 28%),
+                radial-gradient(circle at top right, rgba(137,111,140,.28), transparent 32%),
+                linear-gradient(180deg, #f6f3f8 0%, #ebe7ef 100%);
+        }
 
-a {
-  color: var(--clr-bright-pink);
-  text-decoration: none;
-  transition: color var(--transition);
-}
+        a{color:var(--c1);text-decoration:none}
+        a:hover{color:var(--c6)}
+        img{max-width:100%;display:block}
 
-a:hover {
-  color: var(--clr-imperial-red);
-}
+        .site-shell{
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+        }
 
-.container {
-  max-width: 900px;
-  margin: auto;
-  padding: 32px 16px;
-}
+        .site-header{
+            position:sticky;
+            top:0;
+            z-index:50;
+            backdrop-filter:blur(16px);
+            background:rgba(246,243,248,.82);
+            border-bottom:1px solid rgba(93,69,95,.12);
+        }
 
-.card {
-  background-color: var(--clr-penn-red);
-  border-radius: var(--radius);
-  box-shadow: 0 4px 12px rgba(0, 255, 255, 0.2);
-  padding: 16px;
-  margin-bottom: 19px;
-  transition: transform var(--transition), box-shadow var(--transition);
-  color: var(--clr-text-light);
-}
+        .header-inner,
+        .page-wrap,
+        .footer-inner{
+            width:min(1240px, calc(100% - 32px));
+            margin:0 auto;
+        }
 
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 20px rgba(0, 206, 209, 0.4);
-}
+        .header-inner{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:18px;
+            padding:14px 0;
+            flex-wrap:wrap;
+        }
 
-.card h2 {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--clr-text-muted);
-}
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:14px;
+            min-width:240px;
+        }
 
-.card p {
-  color: var(--clr-text-muted);
-  line-height: 1.6;
-}
+        .brand-mark{
+            width:52px;
+            height:52px;
+            border-radius:16px;
+            background:linear-gradient(145deg,var(--c1),var(--c2),var(--c6));
+            box-shadow:var(--shadow);
+            position:relative;
+            overflow:hidden;
+        }
 
-.form-control,
-input[type="text"],
-input[type="password"],
-input[type="date"],
-input[type="time"],
-textarea {
-  background-color: #3a005f;
-  color: var(--clr-text-light);
-  border: 1px solid var(--clr-penn-red);
-  border-radius: var(--radius);
-  padding: 12px;
-  font-size: 16px;
-  transition: border-color var(--transition), box-shadow var(--transition);
-  width: 100%;
-  box-sizing: border-box;
-}
+        .brand-mark::before,
+        .brand-mark::after{
+            content:"";
+            position:absolute;
+            inset:auto;
+            border-radius:999px;
+            background:rgba(255,255,255,.22);
+        }
+        .brand-mark::before{width:38px;height:38px;top:-8px;right:-10px}
+        .brand-mark::after{width:24px;height:24px;left:8px;bottom:6px}
 
-.form-control:focus,
-input[type="text"]:focus,
-input[type="password"]:focus,
-input[type="date"]:focus,
-input[type="time"]:focus,
-textarea:focus {
-  border-color: var(--clr-bright-pink);
-  box-shadow: 0 0 8px var(--clr-bright-pink);
-  outline: none;
-}
+        .brand-text strong{
+            display:block;
+            color:var(--c1);
+            font-size:1.05rem;
+            letter-spacing:.04em;
+        }
+        .brand-text span{
+            display:block;
+            color:#6f6474;
+            font-size:.9rem;
+        }
 
-input[type="checkbox"] {
-  accent-color: var(--clr-bright-pink);
-  width: 16px;
-  height: 16px;
-}
+        .nav-links{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+            flex-wrap:wrap;
+            flex:1 1 420px;
+        }
 
-.flash {
-  padding: 12px 16px;
-  border-radius: 6px;
-  margin-bottom: 16px;
-  font-size: 14px;
-}
+        .nav-link{
+            padding:10px 16px;
+            border-radius:999px;
+            color:var(--c1);
+            font-weight:600;
+            background:rgba(255,255,255,.52);
+            border:1px solid rgba(137,111,140,.18);
+            transition:.22s ease;
+        }
+        .nav-link:hover{
+            transform:translateY(-1px);
+            background:linear-gradient(135deg, rgba(137,111,140,.18), rgba(169,165,186,.18));
+            color:var(--c1);
+        }
 
-.flash-success {
-  background-color: #004d40;
-  color: #aef5f5;
-}
+        .user-panel{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            flex-wrap:wrap;
+            justify-content:flex-end;
+        }
 
-.flash-error {
-  background-color: #002b40;
-  color: #ffcdd8;
-}
+        .user-chip{
+            padding:10px 14px;
+            border-radius:999px;
+            background:linear-gradient(135deg, rgba(137,111,140,.18), rgba(169,165,186,.26));
+            border:1px solid rgba(93,69,95,.14);
+            color:var(--c1);
+            font-size:.94rem;
+            font-weight:600;
+        }
 
-button, .btn {
-  background-color: var(--clr-bright-pink);
-  color: var(--clr-bg);
-  padding: 12px 24px;
-  border: none;
-  border-radius: var(--radius);
-  font-weight: 700;
-  text-transform: uppercase;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color var(--transition), transform var(--transition);
-}
+        .btn,
+        button,
+        input[type="submit"]{
+            appearance:none;
+            border:none;
+            outline:none;
+            cursor:pointer;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            padding:12px 18px;
+            border-radius:12px;
+            background:linear-gradient(135deg,var(--c1),var(--c2));
+            color:var(--white) !important;
+            font-weight:700;
+            letter-spacing:.02em;
+            box-shadow:0 12px 26px rgba(93,69,95,.22);
+            transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+        }
+        .btn:hover,
+        button:hover,
+        input[type="submit"]:hover{
+            transform:translateY(-2px);
+            box-shadow:0 16px 34px rgba(93,69,95,.28);
+            color:var(--white) !important;
+        }
+        .btn.secondary,
+        .btn-delete,
+        .btn-outline,
+        .btn-secondary{
+            background:transparent;
+            color:var(--c1) !important;
+            border:1px solid rgba(93,69,95,.2);
+            box-shadow:none;
+        }
+        .btn.edit{background:linear-gradient(135deg,var(--c2),var(--c6))}
+        .btn.delete{background:linear-gradient(135deg,#8d5f72,#6b4a5d)}
+        .btn-sm{padding:9px 14px;font-size:.92rem}
 
-button:hover, .btn:hover {
-  background-color: var(--clr-imperial-red);
-  transform: scale(1.05);
-  color: #000;
-}
+        .page-wrap{
+            width:min(1240px, calc(100% - 32px));
+            margin:26px auto 40px auto;
+            display:grid;
+            grid-template-columns:minmax(0,1fr);
+            gap:24px;
+            flex:1;
+        }
 
-.btn.secondary {
-  background-color: transparent;
-  color: var(--clr-bright-pink);
-  border: 2px solid var(--clr-bright-pink);
-}
+        .main-panel{
+            min-width:0;
+        }
 
-.btn.secondary:hover {
-  background-color: var(--clr-bright-pink);
-  color: var(--clr-bg);
-}
+        .hero-panel,
+        .card,
+        .client-card,
+        .surface,
+        .table-wrap,
+        .auth-card,
+        .event-details-card,
+        .jumbotron{
+            background:rgba(255,255,255,.72);
+            border:var(--border);
+            box-shadow:var(--shadow);
+            border-radius:var(--radius-xl);
+            backdrop-filter:blur(10px);
+        }
 
-.auth-grid {
-  display: flex;
-  justify-content: center;
-  padding: 32px 16px;
-  background-color: var(--clr-bg);
-  min-height: auto; /* was 100vh */
-}
+        .hero-panel,
+        .jumbotron{
+            position:relative;
+            overflow:hidden;
+            padding:34px;
+            background:
+                linear-gradient(135deg, rgba(93,69,95,.95), rgba(137,111,140,.84) 48%, rgba(109,121,136,.9));
+            color:#fff;
+        }
+        .hero-panel::after,
+        .jumbotron::after{
+            content:"";
+            position:absolute;
+            width:220px;
+            height:220px;
+            right:-50px;
+            top:-80px;
+            border-radius:50%;
+            background:rgba(255,255,255,.12);
+        }
+        .hero-panel h1,
+        .hero-panel h2,
+        .jumbotron h1,
+        .jumbotron h2,
+        .jumbotron .display-4{
+            color:#fff;
+            margin:0 0 10px 0;
+            font-size:clamp(2rem, 4vw, 3.2rem);
+            line-height:1.05;
+        }
+        .hero-panel p,
+        .jumbotron .lead{
+            color:rgba(255,255,255,.9);
+            font-size:1.05rem;
+            max-width:760px;
+            margin:0;
+        }
 
-.client-container {
-  background-color: var(--clr-penn-red);
-  border-radius: 12px;
-  padding: 24px 16px;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
-  color: var(--clr-text-light);
-  max-width: 900px;
-  margin: 16px auto;
+        .section-title,
+        h1,h2,h3,h4,h5{
+            color:var(--c1);
+            margin-top:0;
+        }
+        h1{font-size:2rem}
+        h2{font-size:1.5rem}
+        h3{font-size:1.2rem}
 
-  /* Responsive grid layout for cards */
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 12px;
-  justify-items: center;
-}
+        .container,
+        .container.mt-5,
+        .container.mx-auto{
+            width:100%;
+            max-width:none;
+            margin:0;
+            padding:0;
+        }
 
-.client-header {
-  font-size: 29px;
-  font-weight: 700;
-  color: var(--clr-text-muted);
-  margin-bottom: 16px;
-  text-align: center;
-}
+        .row{
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:24px;
+            margin-top:24px;
+        }
+        .col-md-6{min-width:0}
+        .mb-3{margin-bottom:18px}
+        .mb-4{margin-bottom:18px}
+        .mb-6{margin-bottom:24px}
+        .mt-5{margin-top:0!important}
+        .p-5{padding:0!important}
+        .rounded{border-radius:var(--radius-xl)!important}
+        .bg-light,.bg-white{background:transparent!important}
+        .shadow-md,.shadow{box-shadow:none!important}
 
-.client-card {
-  background-color: var(--clr-bg);
-  border: 1px solid var(--clr-bright-pink);
-  border-radius: 10px;
-  padding: 16px;
-  color: var(--clr-text-light);
-  box-shadow: 0 0 8px rgba(0, 255, 255, 0.1);
-  transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
-  min-width: 220px;
-  max-width: 280px;
-}
+        .card{
+            padding:20px;
+            color:var(--text);
+        }
+        .card-body{padding:0}
+        .card-title{margin-bottom:8px}
+        .card-text{color:#504756; line-height:1.6}
+        .card-img-top{
+            width:100%;
+            border-radius:16px;
+            margin-bottom:16px;
+        }
 
-.client-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 0 14px rgba(0, 255, 255, 0.4);
-}
+        .client-container{
+            display:grid;
+            grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+            gap:20px;
+            margin-top:18px;
+            padding:0;
+            background:none;
+            box-shadow:none;
+        }
+        .client-card{
+            padding:20px;
+            transition:transform .2s ease, box-shadow .2s ease;
+        }
+        .client-card:hover,
+        .card:hover{
+            transform:translateY(-4px);
+            box-shadow:0 20px 42px rgba(93,69,95,.18);
+        }
 
-.client-card h3 {
-  margin-top: 0;
-  color: var(--clr-text-muted);
-  font-size: 19px;
-}
+        .btn-detail{
+            margin-top:10px;
+            display:inline-flex;
+            padding:10px 14px;
+            border-radius:12px;
+            background:linear-gradient(135deg,var(--c1),var(--c2));
+            color:#fff !important;
+            font-weight:700;
+        }
 
-.client-card p {
-  margin: 5px 0;
-  color: var(--clr-text-muted);
-}
+        .flash,
+        .error-block,
+        .invalid-feedback,
+        .bg-red-100{
+            border-radius:16px;
+            padding:14px 16px;
+            margin:0 0 18px 0;
+        }
+        .flash-success{
+            background:rgba(109,121,136,.16);
+            border:1px solid rgba(109,121,136,.28);
+            color:#33404c;
+        }
+        .flash-error,
+        .error-block,
+        .bg-red-100{
+            background:rgba(141,95,114,.13);
+            border:1px solid rgba(141,95,114,.24);
+            color:#6c3c50;
+        }
+        .invalid-feedback{padding:8px 0 0 0; background:none; border:none; color:#8d3e5b}
 
-.btn-detail {
-  display: inline-block;
-  margin-top: 10px;
-  background-color: var(--clr-bright-pink);
-  color: var(--clr-bg);
-  font-weight: 700;
-  padding: 8px 19px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-size: 14px;
-  transition: background-color var(--transition), color var(--transition);
-}
+        form{
+            width:100%;
+        }
+        label{
+            display:block;
+            margin-bottom:8px;
+            font-weight:700;
+            color:var(--c1);
+        }
 
-.btn-detail:hover {
-  background-color: var(--clr-imperial-red);
-  color: #000;
-}
+        .form-control,
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="date"],
+        input[type="time"],
+        input[type="number"],
+        select,
+        textarea{
+            width:100%;
+            border:1px solid rgba(93,69,95,.18);
+            background:rgba(255,255,255,.82);
+            color:var(--text);
+            border-radius:14px;
+            padding:13px 14px;
+            font-size:1rem;
+            transition:border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+        .form-control:focus,
+        input:focus,
+        select:focus,
+        textarea:focus{
+            border-color:var(--c2);
+            box-shadow:0 0 0 4px rgba(137,111,140,.16);
+            outline:none;
+        }
+        textarea{min-height:140px; resize:vertical}
 
-.page-title {
-  margin: 10px auto 5px auto;
-  font-weight: 700;
-  font-size: 22px;
-  color: var(--clr-bright-pink);
-  max-width: 600px;
-  text-align: center;
-}
+        .form-row{
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:18px;
+            margin-bottom:18px;
+        }
+        .form-group{min-width:0}
+        .pasakumi-container,
+        .surface,
+        .auth-card{
+            padding:28px;
+            background:rgba(255,255,255,.72);
+            border:var(--border);
+            border-radius:var(--radius-xl);
+            box-shadow:var(--shadow);
+        }
+        .pasakumi-form{margin-top:18px}
+        .required-star{color:#8d5f72}
+        .form-actions{
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+            margin-top:26px;
+        }
 
-.page-subtitle {
-  margin: 0 auto 15px auto;
-  font-weight: 400;
-  font-size: 13px;
-  color: var(--clr-text-muted);
-  max-width: 600px;
-  text-align: center;
-}
+        .table-wrap{
+            overflow:auto;
+            padding:14px;
+            margin-top:18px;
+        }
+        table{
+            width:100%;
+            border-collapse:separate;
+            border-spacing:0;
+            overflow:hidden;
+            border-radius:18px;
+            background:rgba(255,255,255,.86);
+        }
+        th{
+            background:linear-gradient(135deg,var(--c1),var(--c6));
+            color:#fff;
+            font-size:.95rem;
+            letter-spacing:.02em;
+        }
+        th,td{
+            padding:14px 12px;
+            border-bottom:1px solid rgba(93,69,95,.08);
+            vertical-align:middle;
+        }
+        td{color:#4b4251}
+        tr:last-child td{border-bottom:none}
+        tr:hover td{background:rgba(169,165,186,.10)}
 
-.btn-add-client {
-  background-color: var(--clr-bright-pink);
-  color: var(--clr-bg);
-  padding: 8px 16px;
-  font-weight: 700;
-  font-size: 14px;
-  border-radius: 6px;
-  margin-bottom: 15px;
-  display: inline-block;
-  transition: background-color var(--transition);
-}
+        .max-w-md{max-width:560px;margin:0 auto}
+        .mx-auto{margin-left:auto;margin-right:auto}
+        .px-4,.py-8{padding:0!important}
+        .text-center{text-align:center}
+        .text-2xl{font-size:2rem}
+        .font-bold{font-weight:700}
+        .block{display:block}
+        .w-full{width:100%}
+        .rounded-lg{border-radius:var(--radius-xl)}
+        .leading-tight{line-height:1.4}
+        .focus\:outline-none:focus{outline:none}
+        .flex{display:flex}
+        .items-center{align-items:center}
+        .justify-between{justify-content:space-between}
+        .gap-2{gap:8px}
 
-.btn-add-client:hover {
-  background-color: var(--clr-imperial-red);
-  color: #000;
-}
+        .event-details-card{
+            max-width:860px !important;
+            margin:0 auto;
+            padding:28px !important;
+            color:var(--text) !important;
+            background:rgba(255,255,255,.8) !important;
+        }
 
-.btn-back {
-  display: block;
-  width: max-content;
-  margin: 24px auto 32px auto;
-  background-color: var(--clr-bright-pink);
-  padding: 12px 24px;
-  font-weight: 700;
-  font-size: 16px;
-  border-radius: 8px;
-  color: var(--clr-bg);
-  text-align: center;
-  text-decoration: none;
-  transition: background-color var(--transition), transform var(--transition);
-}
+        .footer{
+            margin-top:auto;
+            border-top:1px solid rgba(93,69,95,.12);
+            background:rgba(255,255,255,.46);
+        }
+        .footer-inner{
+            padding:18px 0 28px 0;
+            color:#6e6472;
+            text-align:center;
+        }
 
-.btn-back:hover {
-  background-color: var(--clr-imperial-red);
-  color: #000;
-  transform: scale(1.05);
-}
+        .page-heading{
+            margin-bottom:18px;
+        }
+        .page-heading h1{
+            margin-bottom:6px;
+        }
+        .page-heading p{
+            margin:0;
+            color:#645a69;
+        }
 
-/* box in upper-right for authentication controls */
-.auth-container {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 8px 12px;
-  /* you can add border/background if you want a visible box */
-}
+        @media (max-width: 980px){
+            .row,
+            .form-row{
+                grid-template-columns:1fr;
+            }
+            .header-inner{
+                align-items:flex-start;
+            }
+            .user-panel{
+                width:100%;
+                justify-content:flex-start;
+            }
+        }
 
-
-  
-  header { position: relative; }
-</style>
+        @media (max-width: 700px){
+            .header-inner, .page-wrap, .footer-inner{
+                width:min(100% - 22px, 1240px);
+            }
+            .hero-panel, .jumbotron, .pasakumi-container, .auth-card, .event-details-card, .card{
+                padding:22px;
+            }
+            .nav-links{
+                justify-content:flex-start;
+            }
+            .btn, button{
+                width:auto;
+            }
+        }
+    </style>
 </head>
 <body>
- <!-- navigacijas josla -->
-  <header>
-    <div class="nav container" style="display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap;">
-      @auth
-        <a href="/" class="btn">Sākumlapa</a>
-        <a href="/pasakumi" class="btn">Pasakumi</a>
-        @if(auth()->user()->loma !== 'Lietotajs')
-          <a href="/telpas" class="btn">Telpas</a>
-          <a href="/lietotaji" class="btn">Lietotāji</a>
-          <a href="/rezerveskopijas" class="btn">Rezerves kopijas</a>
-          <a href="/kategorijas" class="btn">Kategorijas</a>
-          <a href="/jaunumi" class="btn">Jaunumi</a>
+<div class="site-shell">
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="brand">
+                <div class="brand-mark"></div>
+                <div class="brand-text">
+                    <strong>Bibliotēkas sistēma</strong>
+                    <span>Mūsdienīgs dizains jūsu pārvaldībai</span>
+                </div>
+            </div>
+
+            <nav class="nav-links">
+                @auth
+                    <a href="/" class="nav-link">Sākumlapa</a>
+                    <a href="/pasakumi" class="nav-link">Pasākumi</a>
+                    @if(auth()->user()->loma !== 'Lietotajs')
+                        <a href="/telpas" class="nav-link">Telpas</a>
+                        <a href="/lietotaji" class="nav-link">Lietotāji</a>
+                        <a href="/rezerveskopijas" class="nav-link">Rezerves kopijas</a>
+                        <a href="/kategorijas" class="nav-link">Kategorijas</a>
+                        <a href="/jaunumi" class="nav-link">Jaunumi</a>
+                    @endif
+                @else
+                    <a href="/" class="nav-link">Sākums</a>
+                @endauth
+            </nav>
+
+            <div class="user-panel">
+                @if(auth()->check())
+                    <div class="user-chip">
+                        {{ auth()->user()->vards }} {{ auth()->user()->uzvards }} · {{ auth()->user()->loma }}
+                    </div>
+                    <form method="POST" action="/logout" style="margin:0;">
+                        @csrf
+                        <button class="btn secondary" type="submit">Izrakstīties</button>
+                    </form>
+                @else
+                    <a href="/login" class="btn">Ielogoties</a>
+                    <a href="/register" class="btn secondary">Reģistrēties</a>
+                @endif
+            </div>
+        </div>
+    </header>
+
+    <main class="page-wrap">
+        <div class="main-panel">
+            @yield('content')
+        </div>
+
+        @hasSection('sidemenu')
+            <aside>
+                @yield('sidemenu')
+            </aside>
         @endif
-      @endauth
-    </div>
+    </main>
 
- <!-- kreisajā augšējā stūrī kastītis, kurā parādās lietotāja vārds, uzvārds un loma un poga izrakstities\ielogoties -->
-<div class="auth-container">
-    @if(auth()->check())
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="margin-right: 10px;">
-                {{ auth()->user()->vards }} {{ auth()->user()->uzvards }} ({{ auth()->user()->loma }})
-            </span>
-            <form method="POST" action="/logout" style="display:inline">
-                @csrf
-                <button class="btn secondary" type="submit">Izrakstīties</button>
-            </form>
+    <footer class="footer">
+        <div class="footer-inner">
+            © {{ date('Y') }} Bibliotēkas sistēma · ziemas paletes dizains
         </div>
-    @else
-        <div style="display: flex; gap: 10px;">
-            <a href="/login" class="btn">Ielogoties</a>
-            <a href="/register" class="btn primary">Reģistrēties</a>
-        </div>
-    @endif
+    </footer>
 </div>
-  </header>
-
-  <main class="container" style="display:flex; gap:24px;">
-    <div style="flex:1">
-      @yield('content')
-    </div>
-
-    @hasSection('sidemenu')
-      <aside style="width:250px;">
-        @yield('sidemenu')
-      </aside>
-    @endif
-  </main>
-
-  <footer style="text-align: center; padding: 16px 0; color: var(--clr-text-muted);">
-    © {{ date('Y') }} Jūsu projekts — izstrādes režīmā
-  </footer>
 </body>
 </html>
