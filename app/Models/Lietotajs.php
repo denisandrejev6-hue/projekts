@@ -13,14 +13,16 @@ class Lietotajs extends Authenticatable
     protected $primaryKey = 'ID';
     public $timestamps = false;
 
-    protected $fillable = [
-        'vards',
-        'uzvards',
-        'epasts',
-        'loma',
-        'parole',
-        'aktivs',
-    ];
+  protected $fillable = [
+    'vards',
+    'uzvards',
+    'epasts',
+    'email',
+    'loma',
+    'parole',
+    'password',
+    'aktivs',
+];
 
     protected $hidden = [
         'parole',

@@ -47,28 +47,32 @@ class AuthController extends Controller
     }
 
     public function register(Request $request)
-    {
-        $validated = $request->validate([
-            'vards' => 'required|string|max:45',
-            'uzvards' => 'required|string|max:25',
-            'epasts' => 'required|email|max:50|unique:lietotaji,epasts',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+{
+    $validated = $request->validate([
+        'vards' => 'required|string|max:45',
+        'uzvards' => 'required|string|max:25',
+        'epasts' => 'required|email|max:50|unique:lietotaji,epasts',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
 
-        Lietotajs::create([
-            'vards' => $validated['vards'],
-            'uzvards' => $validated['uzvards'],
-            'epasts' => $validated['epasts'],
-            'loma' => 'Lietotajs',
-            'parole' => Hash::make($validated['password']),
-            'aktivs' => 0,
-        ]);
+    $hashedPassword = Hash::make($validated['password']);
 
-        return redirect()->route('login')->with(
-            'success',
-            'Reģistrācija veiksmīga. Gaidiet profila apstiprināšanu.'
-        );
-    }
+    Lietotajs::create([
+        'vards' => $validated['vards'],
+        'uzvards' => $validated['uzvards'],
+        'epasts' => $validated['epasts'],
+        'email' => $validated['epasts'],
+        'loma' => 'Lietotajs',
+        'parole' => $hashedPassword,
+        'password' => $hashedPassword,
+        'aktivs' => 0,
+    ]);
+
+    return redirect()->route('login')->with(
+        'success',
+        'Reģistrācija veiksmīga. Gaidiet profila apstiprināšanu.'
+    );
+}
 
     public function logout(Request $request)
     {
