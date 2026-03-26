@@ -182,7 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const telpaSelect = document.getElementById('telpa_id');
     const telpaStatuss = document.getElementById('telpa-statuss');
-    const selectedRoom = telpaSelect.dataset.selectedRoom;
     let activeRequest = 0;
 
     const setPlaceholder = (message, disabled = true) => {
@@ -196,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         telpaStatuss.textContent = message;
     };
 
-    const renderRooms = (rooms) => {
+    const renderRooms = (rooms, selectedRoom) => {
         telpaSelect.innerHTML = '';
 
         const placeholder = document.createElement('option');
@@ -211,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
             option.value = room.ID;
             option.textContent = `${room.nosaukums} (ietilpība: ${room.ietilpiba ?? 'nav norādīta'})`;
 
-            if (String(room.ID) === selectedRoom) {
+            if (String(room.ID) === String(selectedRoom)) {
                 option.selected = true;
             }
 
@@ -234,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const selectedRoom = telpaSelect.value || telpaSelect.dataset.selectedRoom;
         const requestId = ++activeRequest;
         setPlaceholder('Notiek brīvo telpu ielāde...', true);
 
@@ -262,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            renderRooms(data.telpas ?? []);
+            renderRooms(data.telpas ?? [], selectedRoom);
         } catch (error) {
             if (requestId !== activeRequest) {
                 return;
