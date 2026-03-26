@@ -224,12 +224,16 @@ document.addEventListener('DOMContentLoaded', () => {
             : 'Šajā laikā nav nevienas brīvas telpas.';
     };
 
-    const hasRequiredValues = () => {
-        return Object.values(fields).every((field) => field && field.value);
+    const hasDateValues = () => {
+        return Boolean(fields.datumsNo?.value && fields.datumsLidz?.value);
+    };
+
+    const hasTimeValues = () => {
+        return Boolean(fields.sakumaLaiks?.value && fields.beiguLaiks?.value);
     };
 
     const isValidRange = () => {
-        if (!hasRequiredValues()) {
+        if (!hasDateValues()) {
             return false;
         }
 
@@ -237,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
 
-        if (fields.sakumaLaiks.value >= fields.beiguLaiks.value) {
+        if (hasTimeValues() && fields.sakumaLaiks.value >= fields.beiguLaiks.value) {
             return false;
         }
 
@@ -247,9 +251,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const getAvailableRooms = () => {
         return telpas.filter((room) => {
             return !aiznemtieLaiki.some((booking) => {
+                const dateOverlap = booking.datums_no <= fields.datumsLidz.value
+                    && booking.datums_lidz >= fields.datumsNo.value;
+
+                if (!dateOverlap) {
+                    return false;
+                }
+
+                if (!hasTimeValues()) {
+                    return String(booking.telpa_id) === String(room.ID);
+                }
+
                 return String(booking.telpa_id) === String(room.ID)
-                    && booking.datums_no <= fields.datumsLidz.value
-                    && booking.datums_lidz >= fields.datumsNo.value
                     && booking.sakuma_laiks < fields.beiguLaiks.value
                     && booking.beigu_laiks > fields.sakumaLaiks.value;
             });
@@ -257,8 +270,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const loadRooms = () => {
-        if (!hasRequiredValues()) {
-            setPlaceholder('Vispirms izvēlieties datumu un laiku');
+        if (!hasDateValues()) {
+            setPlaceholder('Vispirms izvēlieties pasākuma datumus');
             return;
         }
 
@@ -269,6 +282,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const selectedRoom = telpaSelect.value || telpaSelect.dataset.selectedRoom;
         renderRooms(getAvailableRooms(), selectedRoom);
+
+        if (!hasTimeValues()) {
+            telpaStatuss.textContent = 'Telpas atlasītas pēc datuma. Norādiet laikus, lai precizētu pieejamību.';
+        }
     };
 
     Object.values(fields).forEach((field) => {
