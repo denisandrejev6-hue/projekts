@@ -35,9 +35,10 @@ class PasakumuController extends Controller
             ->orderBy('uzvards')
             ->get();
 
-        $telpas = collect();
+        $telpas = Telpa::orderBy('nosaukums')->get(['ID', 'nosaukums', 'ietilpiba']);
+        $aiznemtieLaiki = $this->aiznemtieTelpuLaiki();
 
-        return view('create', compact('darbinieki', 'telpas'));
+        return view('create', compact('darbinieki', 'telpas', 'aiznemtieLaiki'));
     }
 
     public function availableRooms(Request $request)
@@ -152,9 +153,10 @@ class PasakumuController extends Controller
             ->orderBy('uzvards')
             ->get();
 
-        $telpas = Telpa::orderBy('nosaukums')->get();
+        $telpas = Telpa::orderBy('nosaukums')->get(['ID', 'nosaukums', 'ietilpiba']);
+        $aiznemtieLaiki = $this->aiznemtieTelpuLaiki($id);
 
-        return view('edit', compact('item', 'darbinieki', 'telpas'));
+        return view('edit', compact('item', 'darbinieki', 'telpas', 'aiznemtieLaiki'));
     }
 
     public function update(Request $request, $id)
@@ -354,6 +356,13 @@ class PasakumuController extends Controller
             ->whereNotIn('ID', $aiznemtasTelpas)
             ->orderBy('nosaukums')
             ->get(['ID', 'nosaukums', 'ietilpiba']);
+    }
+
+    private function aiznemtieTelpuLaiki($ignoreId = null)
+    {
+        return Pasakumi::query()
+            ->when($ignoreId, fn ($query) => $query->where('ID', '!=', $ignoreId))
+            ->get(['telpa_id', 'datums_no', 'datums_lidz', 'sakuma_laiks', 'beigu_laiks']);
     }
 
     private function varPieteikties($lietotajs, $pasakums, $esosaisPieteikums = null): bool

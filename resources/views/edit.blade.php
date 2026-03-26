@@ -169,6 +169,8 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    const telpas = @json($telpas->values());
+    const aiznemtieLaiki = @json($aiznemtieLaiki->values());
     const fields = {
         datumsNo: document.querySelector('input[name="datums_no"]'),
         datumsLidz: document.querySelector('input[name="datums_lidz"]'),
@@ -177,7 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const telpaSelect = document.getElementById('telpa_id');
     const telpaStatuss = document.getElementById('telpa-statuss');
-    let activeRequest = 0;
 
     const setPlaceholder = (message, disabled = true) => {
         telpaSelect.innerHTML = '';
@@ -222,50 +223,47 @@ document.addEventListener('DOMContentLoaded', () => {
         return Object.values(fields).every((field) => field && field.value);
     };
 
-    const loadRooms = async () => {
+    const isValidRange = () => {
+        if (!hasRequiredValues()) {
+            return false;
+        }
+
+        if (fields.datumsNo.value > fields.datumsLidz.value) {
+            return false;
+        }
+
+        if (fields.sakumaLaiks.value >= fields.beiguLaiks.value) {
+            return false;
+        }
+
+        return true;
+    };
+
+    const getAvailableRooms = () => {
+        return telpas.filter((room) => {
+            return !aiznemtieLaiki.some((booking) => {
+                return String(booking.telpa_id) === String(room.ID)
+                    && booking.datums_no <= fields.datumsLidz.value
+                    && booking.datums_lidz >= fields.datumsNo.value
+                    && booking.sakuma_laiks < fields.beiguLaiks.value
+                    && booking.beigu_laiks > fields.sakumaLaiks.value;
+            });
+        });
+    };
+
+    const loadRooms = () => {
         if (!hasRequiredValues()) {
             setPlaceholder('Vispirms izvēlieties datumu un laiku');
             return;
         }
 
-        const selectedRoom = telpaSelect.value;
-        const requestId = ++activeRequest;
-        setPlaceholder('Notiek brīvo telpu ielāde...', true);
-
-        const params = new URLSearchParams({
-            datums_no: fields.datumsNo.value,
-            datums_lidz: fields.datumsLidz.value,
-            sakuma_laiks: fields.sakumaLaiks.value,
-            beigu_laiks: fields.beiguLaiks.value,
-            ignore_id: telpaSelect.dataset.ignoreId,
-        });
-
-        try {
-            const response = await fetch(`{{ route('pasakumi.availableRooms') }}?${params.toString()}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Neizdevās ielādēt telpas.');
-            }
-
-            const data = await response.json();
-
-            if (requestId !== activeRequest) {
-                return;
-            }
-
-            renderRooms(data.telpas ?? [], selectedRoom);
-        } catch (error) {
-            if (requestId !== activeRequest) {
-                return;
-            }
-
-            setPlaceholder('Neizdevās ielādēt telpas. Mēģiniet vēlreiz.');
+        if (!isValidRange()) {
+            setPlaceholder('Pārbaudiet, lai beigu datums un laiks būtu pēc sākuma');
+            return;
         }
+
+        const selectedRoom = telpaSelect.value;
+        renderRooms(getAvailableRooms(), selectedRoom);
     };
 
     Object.values(fields).forEach((field) => {
