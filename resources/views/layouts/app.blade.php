@@ -398,7 +398,8 @@
         .is-invalid,
         input.is-invalid,
         select.is-invalid,
-        textarea.is-invalid{
+        textarea.is-invalid,
+        .flatpickr-alt-input.is-invalid{
             border-color:#c84f6f !important;
             background:rgba(200,79,111,.08) !important;
             box-shadow:0 0 0 4px rgba(200,79,111,.16);
@@ -406,7 +407,8 @@
         .is-invalid:focus,
         input.is-invalid:focus,
         select.is-invalid:focus,
-        textarea.is-invalid:focus{
+        textarea.is-invalid:focus,
+        .flatpickr-alt-input.is-invalid:focus{
             border-color:#b43d5c !important;
             box-shadow:0 0 0 4px rgba(200,79,111,.22) !important;
         }
@@ -651,7 +653,36 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/lv.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    const invalidFields = @json(array_keys($errors->toArray()));
+
+    const markFieldInvalid = (field) => {
+        const escapedField = window.CSS && CSS.escape ? CSS.escape(field) : field.replace(/([\[\]\.])/g, '\\$1');
+        const selectors = [
+            `[name="${escapedField}"]`,
+        ];
+
+        if (field.includes('.')) {
+            const baseField = field.replace(/\.\d+$/, '');
+            const bracketField = `${baseField}[]`;
+            const escapedBracketField = window.CSS && CSS.escape ? CSS.escape(bracketField) : bracketField.replace(/([\[\]\.])/g, '\\$1');
+            selectors.push(`[name="${escapedBracketField}"]`);
+        }
+
+        const elements = document.querySelectorAll(selectors.join(','));
+
+        elements.forEach((element) => {
+            element.classList.add('is-invalid');
+            element.setAttribute('aria-invalid', 'true');
+
+            if (element._flatpickr && element._flatpickr.altInput) {
+                element._flatpickr.altInput.classList.add('is-invalid');
+                element._flatpickr.altInput.setAttribute('aria-invalid', 'true');
+            }
+        });
+    };
+
     if (!window.flatpickr) {
+        invalidFields.forEach(markFieldInvalid);
         return;
     }
 
@@ -675,6 +706,11 @@ document.addEventListener('DOMContentLoaded', () => {
             monthSelectorType: 'dropdown',
         });
 
+        if (input.classList.contains('is-invalid') && input._flatpickr && input._flatpickr.altInput) {
+            input._flatpickr.altInput.classList.add('is-invalid');
+            input._flatpickr.altInput.setAttribute('aria-invalid', 'true');
+        }
+
         input.dataset.pickerInitialized = 'true';
     });
 
@@ -694,8 +730,15 @@ document.addEventListener('DOMContentLoaded', () => {
             disableMobile: true,
         });
 
+        if (input.classList.contains('is-invalid') && input._flatpickr && input._flatpickr.altInput) {
+            input._flatpickr.altInput.classList.add('is-invalid');
+            input._flatpickr.altInput.setAttribute('aria-invalid', 'true');
+        }
+
         input.dataset.pickerInitialized = 'true';
     });
+
+    invalidFields.forEach(markFieldInvalid);
 });
 </script>
 @stack('scripts')
