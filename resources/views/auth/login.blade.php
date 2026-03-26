@@ -38,7 +38,8 @@
     <div class="card" style="margin-top:20px;">
         <h3>Demo konti</h3>
         <p><strong>Admins:</strong> Sergejs@gmail.com / Admin@123</p>
-        <p><strong>Lietotājs:</strong> martins@gmail.com / Lietotajs123</p>
+        <p><strong>Darbinieks:</strong> martins@gmail.com / Darbinieks@123</p>
+        <p><strong>Lietotājs:</strong> lietotajs@gmail.com / Lietotajs@123</p>
     </div>
 </div>
 @endsection
