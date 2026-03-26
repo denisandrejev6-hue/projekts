@@ -22,7 +22,7 @@
             <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title">{{ $item->virsraksts }}</h5>
-                    <p class="card-text"><small>{{ \Carbon\Carbon::parse($item->publicets_datums)->format('Y-m-d') }}</small></p>
+                    <p class="card-text"><small>{{ \Carbon\Carbon::parse($item->publicets_datums)->format('d.m.Y') }}</small></p>
                     <p class="card-text">{{ $item->apraksts }}</p>
                 </div>
             </div>
@@ -44,7 +44,7 @@
                 @endif
                 <div class="card-body">
                     <h5 class="card-title">{{ $item->nosaukums }}</h5>
-                    <p class="card-text"><strong>Datums:</strong> {{ $item->datums_no }} - {{ $item->datums_lidz }}</p>
+                    <p class="card-text"><strong>Datums:</strong> {{ \Carbon\Carbon::parse($item->datums_no)->format('d.m.Y') }} - {{ \Carbon\Carbon::parse($item->datums_lidz)->format('d.m.Y') }}</p>
                     <p class="card-text">{{ Str::limit($item->apraksts, 180, '...') }}</p>
                     <a href="{{ route('pasakumi.show', $item->ID) }}" class="btn btn-sm">Skatīt detaļas</a>
                 </div>

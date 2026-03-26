@@ -13,10 +13,10 @@
             <span style="font-weight:600; color:var(--clr-text-muted);">Kategorija:</span> {{ $data->kategorija }}
         </div>
         <div style="margin-bottom: 12px;">
-            <span style="font-weight:600; color:var(--clr-text-muted);">Datums:</span> <span style="color:var(--clr-bright-pink);">{{ $data->datums_no }} – {{ $data->datums_lidz }}</span>
+            <span style="font-weight:600; color:var(--clr-text-muted);">Datums:</span> <span style="color:var(--clr-bright-pink);">{{ \Carbon\Carbon::parse($data->datums_no)->format('d.m.Y') }} – {{ \Carbon\Carbon::parse($data->datums_lidz)->format('d.m.Y') }}</span>
         </div>
         <div style="margin-bottom: 12px;">
-            <span style="font-weight:600; color:var(--clr-text-muted);">Laiks:</span> {{ $data->sakuma_laiks }} – {{ $data->beigu_laiks }}
+            <span style="font-weight:600; color:var(--clr-text-muted);">Laiks:</span> {{ \Carbon\Carbon::parse($data->sakuma_laiks)->format('H:i') }} – {{ \Carbon\Carbon::parse($data->beigu_laiks)->format('H:i') }}
         </div>
         <div style="margin-bottom: 18px;">
             <span style="font-weight:600; color:var(--clr-text-muted);">Apraksts:</span> {{ $data->apraksts }}

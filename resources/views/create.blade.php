@@ -44,7 +44,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Datums no <span class="required-star">*</span></label>
-                <input type="date" name="datums_no" value="{{ old('datums_no') }}"
+                <input type="date" name="datums_no" value="{{ old('datums_no') }}" lang="lv-LV"
                     class="form-control @error('datums_no') is-invalid @enderror">
                 @error('datums_no')
                     <span class="invalid-feedback">{{ $message }}</span>
@@ -53,7 +53,7 @@
 
             <div class="form-group">
                 <label>Datums līdz <span class="required-star">*</span></label>
-                <input type="date" name="datums_lidz" value="{{ old('datums_lidz') }}"
+                <input type="date" name="datums_lidz" value="{{ old('datums_lidz') }}" lang="lv-LV"
                     class="form-control @error('datums_lidz') is-invalid @enderror">
                 @error('datums_lidz')
                     <span class="invalid-feedback">{{ $message }}</span>
@@ -64,7 +64,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Sākuma laiks <span class="required-star">*</span></label>
-                <input type="time" name="sakuma_laiks" value="{{ old('sakuma_laiks') }}"
+                <input type="time" name="sakuma_laiks" value="{{ old('sakuma_laiks') }}" lang="lv-LV"
                     class="form-control @error('sakuma_laiks') is-invalid @enderror">
                 @error('sakuma_laiks')
                     <span class="invalid-feedback">{{ $message }}</span>
@@ -73,7 +73,7 @@
 
             <div class="form-group">
                 <label>Beigu laiks <span class="required-star">*</span></label>
-                <input type="time" name="beigu_laiks" value="{{ old('beigu_laiks') }}"
+                <input type="time" name="beigu_laiks" value="{{ old('beigu_laiks') }}" lang="lv-LV"
                     class="form-control @error('beigu_laiks') is-invalid @enderror">
                 @error('beigu_laiks')
                     <span class="invalid-feedback">{{ $message }}</span>
@@ -84,7 +84,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Reģistrācijas beigu datums</label>
-                <input type="date" name="registracijas_beigu_datums" value="{{ old('registracijas_beigu_datums') }}"
+                <input type="date" name="registracijas_beigu_datums" value="{{ old('registracijas_beigu_datums') }}" lang="lv-LV"
                     class="form-control @error('registracijas_beigu_datums') is-invalid @enderror">
                 @error('registracijas_beigu_datums')
                     <span class="invalid-feedback">{{ $message }}</span>
@@ -93,7 +93,7 @@
 
             <div class="form-group">
                 <label>Reģistrācijas beigu laiks</label>
-                <input type="time" name="registracijas_beigu_laiks" value="{{ old('registracijas_beigu_laiks') }}"
+                <input type="time" name="registracijas_beigu_laiks" value="{{ old('registracijas_beigu_laiks') }}" lang="lv-LV"
                     class="form-control @error('registracijas_beigu_laiks') is-invalid @enderror">
                 @error('registracijas_beigu_laiks')
                     <span class="invalid-feedback">{{ $message }}</span>

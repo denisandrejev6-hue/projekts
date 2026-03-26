@@ -7,7 +7,7 @@
 @section('content')
     <div class="container" style="max-width: 850px; margin-top: 20px;">
         <h1>{{ $item->virsraksts }}</h1>
-        <p><strong>Publicēts:</strong> {{ \Carbon\Carbon::parse($item->publicets_datums)->format('Y-m-d') }}</p>
+        <p><strong>Publicēts:</strong> {{ \Carbon\Carbon::parse($item->publicets_datums)->format('d.m.Y') }}</p>
         <hr>
         <p style="white-space: pre-line;">{{ $item->apraksts }}</p>
 

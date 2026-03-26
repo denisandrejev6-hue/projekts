@@ -1,8 +1,9 @@
 <!doctype html>
-<html lang="lv">
+<html lang="lv-LV">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta http-equiv="Content-Language" content="lv-LV">
     <title>@yield('title', 'Bibliotēkas sistēma')</title>
 
     <style>

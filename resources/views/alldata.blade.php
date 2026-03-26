@@ -17,7 +17,7 @@
             @foreach($data as $index => $item)
                 <div class="client-card">
                     <h3>{{ $item->nosaukums }}</h3>
-                    <p><strong>Datums:</strong> {{ $item->datums_no }} – {{ $item->datums_lidz }}</p>
+                    <p><strong>Datums:</strong> {{ \Carbon\Carbon::parse($item->datums_no)->format('d.m.Y') }} – {{ \Carbon\Carbon::parse($item->datums_lidz)->format('d.m.Y') }}</p>
                     @php
                         $imgFiles = ['img1.jpg', 'img2.jpg', 'img3.jpg'];
                         $imgFile = $imgFiles[$index % count($imgFiles)];
@@ -54,10 +54,10 @@
                 @foreach($data as $item)
                     <tr>
                         <td style="text-align:center;">{{ $item->nosaukums }}</td>
-                        <td style="text-align:center;">{{ $item->datums_no }}</td>
-                        <td style="text-align:center;">{{ $item->datums_lidz }}</td>
-                        <td style="text-align:center;">{{ $item->sakuma_laiks }}</td>
-                        <td style="text-align:center;">{{ $item->beigu_laiks }}</td>
+                        <td style="text-align:center;">{{ \Carbon\Carbon::parse($item->datums_no)->format('d.m.Y') }}</td>
+                        <td style="text-align:center;">{{ \Carbon\Carbon::parse($item->datums_lidz)->format('d.m.Y') }}</td>
+                        <td style="text-align:center;">{{ \Carbon\Carbon::parse($item->sakuma_laiks)->format('H:i') }}</td>
+                        <td style="text-align:center;">{{ \Carbon\Carbon::parse($item->beigu_laiks)->format('H:i') }}</td>
                         <td style="text-align:center;">{{ $item->apraksts }}</td>
                         <td style="text-align:center;">{{ $item->darbinieks->vards ?? 'Nav norādīts' }}</td>
                         <td style="text-align:center;">{{ $item->telpa->nosaukums ?? 'Nav norādīta' }}</td>

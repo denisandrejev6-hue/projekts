@@ -27,7 +27,7 @@
                 @forelse($data as $item)
                     <tr>
                         <td>{{ $item->virsraksts }}</td>
-                        <td>{{ \Carbon\Carbon::parse($item->publicets_datums)->format('Y-m-d') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($item->publicets_datums)->format('d.m.Y') }}</td>
                         @if(auth()->user()->loma !== 'Lietotajs')
                             <td>
                                 <a href="{{ route('jaunumi.edit', $item->id) }}" class="btn btn-sm btn-warning">Rediģēt</a>

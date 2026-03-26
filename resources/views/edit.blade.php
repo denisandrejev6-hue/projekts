@@ -36,12 +36,12 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Datums no</label>
-                <input type="date" name="datums_no" value="{{ old('datums_no', $item->datums_no) }}" class="form-control" required>
+                <input type="date" name="datums_no" value="{{ old('datums_no', $item->datums_no) }}" class="form-control" lang="lv-LV" required>
             </div>
 
             <div class="form-group">
                 <label>Datums līdz</label>
-                <input type="date" name="datums_lidz" value="{{ old('datums_lidz', $item->datums_lidz) }}" class="form-control" required>
+                <input type="date" name="datums_lidz" value="{{ old('datums_lidz', $item->datums_lidz) }}" class="form-control" lang="lv-LV" required>
             </div>
         </div>
 
@@ -78,7 +78,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Reģistrācijas beigu datums</label>
-                <input type="date" name="registracijas_beigu_datums" value="{{ old('registracijas_beigu_datums', $item->registracijas_beigu_datums) }}" class="form-control">
+                <input type="date" name="registracijas_beigu_datums" value="{{ old('registracijas_beigu_datums', $item->registracijas_beigu_datums) }}" class="form-control" lang="lv-LV">
             </div>
 
             <div class="form-group">
