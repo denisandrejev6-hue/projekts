@@ -27,6 +27,49 @@
         <div style="margin-bottom: 24px;">
             <span style="font-weight:600; color:var(--clr-text-muted);">Telpa:</span> {{ $data->telpa->nosaukums ?? 'Nav norādīta' }}
         </div>
+        <div style="margin-bottom: 24px; padding: 16px; border-radius: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);">
+            <div style="margin-bottom: 10px;">
+                <span style="font-weight:600; color:var(--clr-text-muted);">Vietas:</span>
+                @if(!is_null($pieteiksanasInfo['brivasVietas']))
+                    {{ $pieteiksanasInfo['brivasVietas'] }} brīvas no {{ $pieteiksanasInfo['ietilpiba'] }}
+                @else
+                    Nav norādīta telpas ietilpība
+                @endif
+            </div>
+            @if($pieteiksanasInfo['registracijasBeigas'])
+                <div style="margin-bottom: 10px;">
+                    <span style="font-weight:600; color:var(--clr-text-muted);">Pieteikšanās līdz:</span>
+                    {{ $pieteiksanasInfo['registracijasBeigas']->format('d.m.Y H:i') }}
+                </div>
+            @endif
+
+            @if($errors->has('pieteiksanas'))
+                <div style="margin-bottom: 12px; color: #ffb4b4;">{{ $errors->first('pieteiksanas') }}</div>
+            @elseif(!$varPieteikties && auth()->check() && $pieteiksanasInfo['iemesls'])
+                <div style="margin-bottom: 12px; color: var(--clr-text-muted);">{{ $pieteiksanasInfo['iemesls'] }}</div>
+            @elseif(!auth()->check())
+                <div style="margin-bottom: 12px; color: var(--clr-text-muted);">Pieslēdzieties, lai pieteiktos pasākumam.</div>
+            @endif
+
+            @if(session('success'))
+                <div style="margin-bottom: 12px; color: #9ff2b0;">{{ session('success') }}</div>
+            @endif
+
+            @if($lietotajaPieteikums)
+                <div style="color: #9ff2b0; font-weight: 600;">Jūsu pieteikuma statuss: {{ $lietotajaPieteikums->statuss }}</div>
+            @elseif($varPieteikties)
+                <form method="POST" action="{{ route('pasakumi.pieteikties', $data->ID) }}">
+                    @csrf
+                    <button type="submit" class="btn" style="width: 100%; padding: 12px 18px; border-radius: 10px; font-weight: 700;">
+                        Pieteikties pasākumam
+                    </button>
+                </form>
+            @else
+                <button type="button" class="btn secondary" style="width: 100%; padding: 12px 18px; border-radius: 10px; opacity: 0.7; cursor: not-allowed;" disabled>
+                    Pieteikšanās nav pieejama
+                </button>
+            @endif
+        </div>
         @if($data->images->count() > 0)
             <div style="margin-bottom: 24px;">
                 <span style="font-weight:600; color:var(--clr-text-muted);">Attēli:</span>

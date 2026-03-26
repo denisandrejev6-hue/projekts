@@ -74,8 +74,8 @@ class PasakumuController extends Controller
             'apraksts' => 'nullable|max:255',
             'darbinieks_id' => 'required|exists:lietotaji,ID',
             'telpa_id' => 'required|exists:telpa,ID',
-            'registracijas_beigu_datums' => 'nullable|date',
-            'registracijas_beigu_laiks' => 'nullable|date_format:H:i',
+            'registracijas_beigu_datums' => 'nullable|date|required_with:registracijas_beigu_laiks',
+            'registracijas_beigu_laiks' => 'nullable|date_format:H:i|required_with:registracijas_beigu_datums',
             'images' => 'nullable|array|max:10',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -125,13 +125,15 @@ class PasakumuController extends Controller
         $lietotajaPieteikums = null;
         $varPieteikties = false;
         $varAtstatAtsauksmi = false;
+        $pieteiksanasInfo = $this->pieteiksanasInfo(null, $data);
 
         if (auth()->check()) {
             $lietotajaPieteikums = PasakumuPieteikums::where('pasakums_id', $data->ID)
                 ->where('lietotajs_id', auth()->id())
                 ->first();
 
-            $varPieteikties = $this->varPieteikties(auth()->user(), $data, $lietotajaPieteikums);
+            $pieteiksanasInfo = $this->pieteiksanasInfo(auth()->user(), $data, $lietotajaPieteikums);
+            $varPieteikties = $pieteiksanasInfo['varPieteikties'];
             $varAtstatAtsauksmi = $this->varAtstatAtsauksmi(auth()->user(), $data);
         }
 
@@ -139,6 +141,7 @@ class PasakumuController extends Controller
             'data',
             'lietotajaPieteikums',
             'varPieteikties',
+            'pieteiksanasInfo',
             'varAtstatAtsauksmi'
         ));
     }
@@ -171,8 +174,8 @@ class PasakumuController extends Controller
             'apraksts' => 'nullable|max:255',
             'darbinieks_id' => 'required|exists:lietotaji,ID',
             'telpa_id' => 'required|exists:telpa,ID',
-            'registracijas_beigu_datums' => 'nullable|date',
-            'registracijas_beigu_laiks' => 'nullable|date_format:H:i',
+            'registracijas_beigu_datums' => 'nullable|date|required_with:registracijas_beigu_laiks',
+            'registracijas_beigu_laiks' => 'nullable|date_format:H:i|required_with:registracijas_beigu_datums',
             'images' => 'nullable|array|max:10',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -243,19 +246,15 @@ class PasakumuController extends Controller
         $lietotajs = auth()->user();
         $pasakums = Pasakumi::with('telpa', 'aktiviePieteikumi')->findOrFail($id);
 
-        if (!$lietotajs || !$lietotajs->irApstiprinats()) {
-            return back()->withErrors([
-                'pieteiksanas' => 'Tikai apstiprināts lietotājs var pieteikties pasākumam.',
-            ]);
-        }
-
         $esošais = PasakumuPieteikums::where('pasakums_id', $id)
             ->where('lietotajs_id', $lietotajs->ID)
             ->first();
 
-        if (!$this->varPieteikties($lietotajs, $pasakums, $esošais)) {
+        $pieteiksanasInfo = $this->pieteiksanasInfo($lietotajs, $pasakums, $esošais);
+
+        if (!$pieteiksanasInfo['varPieteikties']) {
             return back()->withErrors([
-                'pieteiksanas' => 'Šim pasākumam pašlaik nevar pieteikties.',
+                'pieteiksanas' => $pieteiksanasInfo['iemesls'],
             ]);
         }
 
@@ -386,32 +385,90 @@ class PasakumuController extends Controller
 
     private function varPieteikties($lietotajs, $pasakums, $esosaisPieteikums = null): bool
     {
-        if (!$lietotajs || !$lietotajs->irApstiprinats()) {
-            return false;
+        return $this->pieteiksanasInfo($lietotajs, $pasakums, $esosaisPieteikums)['varPieteikties'];
+    }
+
+    private function pieteiksanasInfo($lietotajs, $pasakums, $esosaisPieteikums = null): array
+    {
+        $ietilpiba = (int) ($pasakums->telpa->ietilpiba ?? 0);
+        $aiznemtasVietas = $pasakums->aktiviePieteikumi->count();
+        $brivasVietas = $ietilpiba > 0 ? max($ietilpiba - $aiznemtasVietas, 0) : null;
+
+        if (!$lietotajs) {
+            return [
+                'varPieteikties' => false,
+                'iemesls' => 'Pieslēdzieties, lai pieteiktos pasākumam.',
+                'aiznemtasVietas' => $aiznemtasVietas,
+                'brivasVietas' => $brivasVietas,
+                'ietilpiba' => $ietilpiba,
+                'registracijasBeigas' => $this->registracijasBeigas($pasakums),
+            ];
+        }
+
+        if (!$lietotajs->irApstiprinats()) {
+            return [
+                'varPieteikties' => false,
+                'iemesls' => 'Tikai apstiprināts lietotājs var pieteikties pasākumam.',
+                'aiznemtasVietas' => $aiznemtasVietas,
+                'brivasVietas' => $brivasVietas,
+                'ietilpiba' => $ietilpiba,
+                'registracijasBeigas' => $this->registracijasBeigas($pasakums),
+            ];
         }
 
         if ($esosaisPieteikums) {
-            return false;
+            return [
+                'varPieteikties' => false,
+                'iemesls' => 'Jūs šim pasākumam jau esat pieteicies.',
+                'aiznemtasVietas' => $aiznemtasVietas,
+                'brivasVietas' => $brivasVietas,
+                'ietilpiba' => $ietilpiba,
+                'registracijasBeigas' => $this->registracijasBeigas($pasakums),
+            ];
         }
 
-        if ($pasakums->registracijas_beigu_datums && $pasakums->registracijas_beigu_laiks) {
-            $registracijasBeigas = Carbon::parse(
-                $pasakums->registracijas_beigu_datums . ' ' . $pasakums->registracijas_beigu_laiks
-            );
-
-            if (now()->gt($registracijasBeigas)) {
-                return false;
-            }
+        $registracijasBeigas = $this->registracijasBeigas($pasakums);
+        if ($registracijasBeigas && now()->gt($registracijasBeigas)) {
+            return [
+                'varPieteikties' => false,
+                'iemesls' => 'Pieteikšanās termiņš šim pasākumam ir beidzies.',
+                'aiznemtasVietas' => $aiznemtasVietas,
+                'brivasVietas' => $brivasVietas,
+                'ietilpiba' => $ietilpiba,
+                'registracijasBeigas' => $registracijasBeigas,
+            ];
         }
-
-        $ietilpiba = (int) ($pasakums->telpa->ietilpiba ?? 0);
-        $aiznemtasVietas = $pasakums->aktiviePieteikumi()->count();
 
         if ($ietilpiba > 0 && $aiznemtasVietas >= $ietilpiba) {
-            return false;
+            return [
+                'varPieteikties' => false,
+                'iemesls' => 'Brīvu vietu vairs nav.',
+                'aiznemtasVietas' => $aiznemtasVietas,
+                'brivasVietas' => 0,
+                'ietilpiba' => $ietilpiba,
+                'registracijasBeigas' => $registracijasBeigas,
+            ];
         }
 
-        return true;
+        return [
+            'varPieteikties' => true,
+            'iemesls' => null,
+            'aiznemtasVietas' => $aiznemtasVietas,
+            'brivasVietas' => $brivasVietas,
+            'ietilpiba' => $ietilpiba,
+            'registracijasBeigas' => $registracijasBeigas,
+        ];
+    }
+
+    private function registracijasBeigas($pasakums): ?Carbon
+    {
+        if (!$pasakums->registracijas_beigu_datums) {
+            return null;
+        }
+
+        $registracijasBeiguLaiks = $pasakums->registracijas_beigu_laiks ?: '23:59';
+
+        return Carbon::parse($pasakums->registracijas_beigu_datums . ' ' . $registracijasBeiguLaiks);
     }
 
     private function varAtstatAtsauksmi($lietotajs, $pasakums): bool
