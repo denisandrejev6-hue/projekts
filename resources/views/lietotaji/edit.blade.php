@@ -14,23 +14,23 @@
         </div>
     @endif
 
-    <form action="{{ route('lietotaji.update', $data->ID) }}" method="POST" style="max-width:500px;">
+    <form action="{{ route('lietotaji.update', $item->ID) }}" method="POST" style="max-width:500px;">
         @csrf
         @method('PUT')
 
         <div class="form-control" style="margin-bottom:16px;">
             <label style="font-weight:700; display:block; margin-bottom:8px;">Vārds:</label>
-            <input type="text" name="vards" value="{{ old('vards', $data->vards) }}" style="width:90%; padding:10px; border-radius:6px;">
+            <input type="text" name="vards" value="{{ old('vards', $item->vards) }}" style="width:90%; padding:10px; border-radius:6px;">
         </div>
 
             <div class="form-control" style="margin-bottom:16px;">
                 <label style="font-weight:700; display:block; margin-bottom:8px;">Uzvārds:</label>
-                <input type="text" name="uzvards" value="{{ old('uzvards', $data->uzvards) }}" style="width:90%; padding:10px; border-radius:6px;">
+                <input type="text" name="uzvards" value="{{ old('uzvards', $item->uzvards) }}" style="width:90%; padding:10px; border-radius:6px;">
             </div>
 
         <div class="form-control" style="margin-bottom:16px;">
             <label style="font-weight:700; display:block; margin-bottom:8px;">E-pasts:</label>
-            <input type="email" name="epasts" value="{{ old('epasts', $data->epasts) }}" style="width:90%; padding:10px; border-radius:6px;">
+            <input type="email" name="epasts" value="{{ old('epasts', $item->epasts) }}" style="width:90%; padding:10px; border-radius:6px;">
         </div>
 
         <div class="form-control" style="margin-bottom:16px;">
@@ -43,10 +43,10 @@
             <select name="loma" style="width:90%; padding:10px; border-radius:6px;">
                 <option value="">-- izvēlēties --</option>
                 @if(auth()->user()->loma === 'Admin')
-                    <option value="Admin" {{ old('loma', $data->loma)=='Admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="Darbinieks" {{ old('loma', $data->loma)=='Darbinieks' ? 'selected' : '' }}>Darbinieks</option>
+                    <option value="Admin" {{ old('loma', $item->loma)=='Admin' ? 'selected' : '' }}>Admin</option>
+                    <option value="Darbinieks" {{ old('loma', $item->loma)=='Darbinieks' ? 'selected' : '' }}>Darbinieks</option>
                 @endif
-                <option value="Lietotajs" {{ old('loma', $data->loma)=='Lietotajs' ? 'selected' : '' }}>Lietotājs</option>
+                <option value="Lietotajs" {{ old('loma', $item->loma)=='Lietotajs' ? 'selected' : '' }}>Lietotājs</option>
             </select>
         </div>
 
