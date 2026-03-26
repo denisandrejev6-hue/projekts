@@ -100,6 +100,9 @@
                 @enderror
             </div>
         </div>
+        <small style="display:block; margin-top:-14px; margin-bottom:24px; color:var(--clr-text-muted, #666);">
+            Reģistrācija jānoslēdz ne vēlāk kā pasākuma sākuma datumā un laikā.
+        </small>
 
         <div class="form-group" style="margin-bottom:24px;">
             <label>Apraksts</label>

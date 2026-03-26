@@ -96,6 +96,13 @@ class PasakumuController extends Controller
             $validated['beigu_laiks']
         );
 
+        $this->parbauditRegistracijasTerminu(
+            $validated['registracijas_beigu_datums'] ?? null,
+            $validated['registracijas_beigu_laiks'] ?? null,
+            $validated['datums_no'],
+            $validated['sakuma_laiks']
+        );
+
         $this->parbauditAtteluSkaitu($request);
 
         $pasakums = Pasakumi::create($validated);
@@ -198,6 +205,13 @@ class PasakumuController extends Controller
             $validated['sakuma_laiks'],
             $validated['beigu_laiks'],
             $id
+        );
+
+        $this->parbauditRegistracijasTerminu(
+            $validated['registracijas_beigu_datums'] ?? null,
+            $validated['registracijas_beigu_laiks'] ?? null,
+            $validated['datums_no'],
+            $validated['sakuma_laiks']
         );
 
         $item = Pasakumi::findOrFail($id);
@@ -346,6 +360,23 @@ class PasakumuController extends Controller
         if ($esošoAtteluSkaits + $jaunoAtteluSkaits > 10) {
             throw ValidationException::withMessages([
                 'images' => 'Pasākumam drīkst pievienot ne vairāk kā 10 attēlus kopā.',
+            ]);
+        }
+    }
+
+    private function parbauditRegistracijasTerminu($registracijasDatums, $registracijasLaiks, $pasakumaDatumsNo, $pasakumaSakumaLaiks): void
+    {
+        if (!$registracijasDatums || !$registracijasLaiks) {
+            return;
+        }
+
+        $registracijasBeigas = Carbon::parse($registracijasDatums . ' ' . $registracijasLaiks);
+        $pasakumaSakums = Carbon::parse($pasakumaDatumsNo . ' ' . $pasakumaSakumaLaiks);
+
+        if ($registracijasBeigas->gt($pasakumaSakums)) {
+            throw ValidationException::withMessages([
+                'registracijas_beigu_datums' => 'Reģistrācijas beigu datums un laiks nedrīkst būt pēc pasākuma sākuma.',
+                'registracijas_beigu_laiks' => 'Reģistrācijas beigu datums un laiks nedrīkst būt pēc pasākuma sākuma.',
             ]);
         }
     }
