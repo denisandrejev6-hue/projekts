@@ -81,7 +81,7 @@
             </div>
         @endif
         @if(auth()->check() && in_array(auth()->user()->loma, ['Admin', 'Darbinieks']))
-            <div style="margin-bottom: 24px; padding: 16px; border-radius: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);">
+            <div id="pieteiktie-lietotaji" style="margin-bottom: 24px; padding: 16px; border-radius: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); scroll-margin-top: 24px;">
                 <div style="margin-bottom: 12px; font-weight: 600; color: var(--clr-text-muted);">
                     Pieteiktie lietotāji ({{ $data->aktiviePieteikumi->count() }})
                 </div>

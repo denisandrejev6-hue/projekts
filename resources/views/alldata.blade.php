@@ -62,7 +62,10 @@
                         <td style="text-align:center;">{{ $item->darbinieks->vards ?? 'Nav norādīts' }}</td>
                         <td style="text-align:center;">{{ $item->telpa->nosaukums ?? 'Nav norādīta' }}</td>
                         <td style="text-align:center;">
-                            <div style="display:flex; gap:8px; justify-content:center; align-items:center;">
+                            <div style="display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:wrap;">
+                                <a href="{{ route('pasakumi.show', $item->ID) }}#pieteiktie-lietotaji" class="btn secondary">
+                                    Pieteiktie lietotāji ({{ $item->aktiviePieteikumi->count() }})
+                                </a>
                                 <a href="{{ route('pasakumi.edit', $item->ID) }}" class="btn edit">Rediģēt</a>
                                 <form action="{{ route('pasakumi.destroy', $item->ID) }}" method="POST" style="margin:0;">
                                     @csrf
