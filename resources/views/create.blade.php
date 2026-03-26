@@ -179,7 +179,7 @@
         </div>
 
         <div class="form-actions">
-            <a href="{{ url()->previous() }}" class="btn btn-secondary">Atcelt</a>
+            <a href="{{ url()->previous() }}" class="btn btn-secondary btn-cancel">Atcelt</a>
             <button type="submit" class="btn">Saglabāt pasākumu</button>
         </div>
     </form>

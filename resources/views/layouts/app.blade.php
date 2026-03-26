@@ -191,6 +191,16 @@
             border:1px solid rgba(93,69,95,.2);
             box-shadow:none;
         }
+        .btn-cancel{
+            background:linear-gradient(135deg, #d78b6c, #c46a52) !important;
+            color:var(--white) !important;
+            border:1px solid rgba(196,106,82,.38) !important;
+            box-shadow:0 12px 26px rgba(196,106,82,.24) !important;
+        }
+        .btn-cancel:hover{
+            color:var(--white) !important;
+            box-shadow:0 16px 34px rgba(196,106,82,.3) !important;
+        }
         .btn.edit{background:linear-gradient(135deg,var(--c2),var(--c6))}
         .btn.delete{background:linear-gradient(135deg,#8d5f72,#6b4a5d)}
         .btn-sm{padding:9px 14px;font-size:.92rem}

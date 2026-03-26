@@ -146,7 +146,7 @@
             <button type="submit" class="btn">Saglabāt izmaiņas</button>
         </div>
         <div class="form-actions" style="margin-top:12px;">
-            <a href="{{ url()->previous() }}" class="btn btn-secondary">Atcelt</a>
+            <a href="{{ url()->previous() }}" class="btn btn-secondary btn-cancel">Atcelt</a>
         </div>
     </form>
 </div>

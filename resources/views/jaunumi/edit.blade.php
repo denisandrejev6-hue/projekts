@@ -69,7 +69,7 @@
 
         <div style="display:flex; gap:12px;">
             <button type="submit" class="btn">Saglabāt</button>
-            <a href="{{ route('jaunumi.index') }}" class="btn secondary">Atcelt</a>
+            <a href="{{ route('jaunumi.index') }}" class="btn secondary btn-cancel">Atcelt</a>
         </div>
     </form>
 @endsection
