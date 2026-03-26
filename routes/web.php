@@ -23,6 +23,10 @@ Route::get('/', function () {
     return view('Home', ['jaunumi' => $jaunumi, 'pasakumi' => $pasakumi]);
 })->middleware('auth');
 
+Route::get('pasakumi/telpas/brivas', [PasakumuController::class, 'availableRooms'])
+    ->middleware(['auth', 'role:Admin,Darbinieks,Lietotajs'])
+    ->name('pasakumi.availableRooms');
+
 Route::resource('pasakumi', PasakumuController::class)->middleware(['auth', 'role:Admin,Darbinieks,Lietotajs']);
 Route::delete('pasakumi/{pasakumi}/images/{image}', [PasakumuController::class, 'deleteImage'])
     ->middleware(['auth', 'role:Admin,Darbinieks'])

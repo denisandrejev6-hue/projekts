@@ -64,18 +64,18 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Sākuma laiks <span class="required-star">*</span></label>
-                <input type="time" name="laiks_no" value="{{ old('laiks_no') }}"
-                    class="form-control @error('laiks_no') is-invalid @enderror">
-                @error('laiks_no')
+                <input type="time" name="sakuma_laiks" value="{{ old('sakuma_laiks') }}"
+                    class="form-control @error('sakuma_laiks') is-invalid @enderror">
+                @error('sakuma_laiks')
                     <span class="invalid-feedback">{{ $message }}</span>
                 @enderror
             </div>
 
             <div class="form-group">
                 <label>Beigu laiks <span class="required-star">*</span></label>
-                <input type="time" name="laiks_lidz" value="{{ old('laiks_lidz') }}"
-                    class="form-control @error('laiks_lidz') is-invalid @enderror">
-                @error('laiks_lidz')
+                <input type="time" name="beigu_laiks" value="{{ old('beigu_laiks') }}"
+                    class="form-control @error('beigu_laiks') is-invalid @enderror">
+                @error('beigu_laiks')
                     <span class="invalid-feedback">{{ $message }}</span>
                 @enderror
             </div>
@@ -111,31 +111,44 @@
         </div>
 
         <div class="form-row" style="margin-bottom:32px;">
-           <div class="form-group">
-    <label>Darbinieks</label>
-    <select name="darbinieks_id" class="form-control">
-        <option value="">-- Izvēlieties darbinieku --</option>
-        @foreach($darbinieki as $d)
-            <option value="{{ $d->ID }}">{{ $d->vards }} {{ $d->uzvards }}</option>
-        @endforeach
-    </select>
-</div>
+            <div class="form-group">
+                <label>Darbinieks <span class="required-star">*</span></label>
+                <select name="darbinieks_id" class="form-control @error('darbinieks_id') is-invalid @enderror">
+                    <option value="">-- Izvēlieties darbinieku --</option>
+                    @foreach($darbinieki as $d)
+                        <option value="{{ $d->ID }}" {{ old('darbinieks_id') == $d->ID ? 'selected' : '' }}>
+                            {{ $d->vards }} {{ $d->uzvards }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('darbinieks_id')
+                    <span class="invalid-feedback">{{ $message }}</span>
+                @enderror
+            </div>
 
-<div class="form-group">
-    <label>Telpa <span class="required-star">*</span></label>
-    <select name="telpa_id" class="form-control @error('telpa_id') is-invalid @enderror">
-        <option value="">-- Izvēlieties telpu --</option>
-        @foreach($telpas as $t)
-            <option value="{{ $t->ID }}" {{ old('telpa_id') == $t->ID ? 'selected' : '' }}>
-                {{ $t->nosaukums }} (ietilpība: {{ $t->ietilpiba ?? 'nav norādīta' }})
-            </option>
-        @endforeach
-    </select>
-    @error('telpa_id')
-        <span class="invalid-feedback">{{ $message }}</span>
-    @enderror
-</div>
-        </div>
+            <div class="form-group">
+                <label>Telpa <span class="required-star">*</span></label>
+                <select
+                    name="telpa_id"
+                    id="telpa_id"
+                    class="form-control @error('telpa_id') is-invalid @enderror"
+                    data-selected-room="{{ old('telpa_id') }}"
+                    disabled
+                >
+                    <option value="">Vispirms izvēlieties datumu un laiku</option>
+                    @foreach($telpas as $t)
+                        <option value="{{ $t->ID }}" {{ old('telpa_id') == $t->ID ? 'selected' : '' }}>
+                            {{ $t->nosaukums }} (ietilpība: {{ $t->ietilpiba ?? 'nav norādīta' }})
+                        </option>
+                    @endforeach
+                </select>
+                <small id="telpa-statuss" style="display:block; margin-top:8px; color:var(--clr-text-muted, #666);">
+                    Telpas būs pieejamas pēc datuma un laika izvēles.
+                </small>
+                @error('telpa_id')
+                    <span class="invalid-feedback">{{ $message }}</span>
+                @enderror
+            </div>
         </div>
 
         <div class="form-group" style="margin-bottom:24px;">
@@ -157,3 +170,113 @@
     </form>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const fields = {
+        datumsNo: document.querySelector('input[name="datums_no"]'),
+        datumsLidz: document.querySelector('input[name="datums_lidz"]'),
+        sakumaLaiks: document.querySelector('input[name="sakuma_laiks"]'),
+        beiguLaiks: document.querySelector('input[name="beigu_laiks"]'),
+    };
+    const telpaSelect = document.getElementById('telpa_id');
+    const telpaStatuss = document.getElementById('telpa-statuss');
+    const selectedRoom = telpaSelect.dataset.selectedRoom;
+    let activeRequest = 0;
+
+    const setPlaceholder = (message, disabled = true) => {
+        telpaSelect.innerHTML = '';
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = message;
+        telpaSelect.appendChild(option);
+        telpaSelect.value = '';
+        telpaSelect.disabled = disabled;
+        telpaStatuss.textContent = message;
+    };
+
+    const renderRooms = (rooms) => {
+        telpaSelect.innerHTML = '';
+
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = rooms.length
+            ? '-- Izvēlieties telpu --'
+            : 'Šajā laikā nav nevienas brīvas telpas';
+        telpaSelect.appendChild(placeholder);
+
+        rooms.forEach((room) => {
+            const option = document.createElement('option');
+            option.value = room.ID;
+            option.textContent = `${room.nosaukums} (ietilpība: ${room.ietilpiba ?? 'nav norādīta'})`;
+
+            if (String(room.ID) === selectedRoom) {
+                option.selected = true;
+            }
+
+            telpaSelect.appendChild(option);
+        });
+
+        telpaSelect.disabled = rooms.length === 0;
+        telpaStatuss.textContent = rooms.length
+            ? 'Redzamas tikai brīvās telpas izvēlētajā laikā.'
+            : 'Šajā laikā nav nevienas brīvas telpas.';
+    };
+
+    const hasRequiredValues = () => {
+        return Object.values(fields).every((field) => field && field.value);
+    };
+
+    const loadRooms = async () => {
+        if (!hasRequiredValues()) {
+            setPlaceholder('Vispirms izvēlieties datumu un laiku');
+            return;
+        }
+
+        const requestId = ++activeRequest;
+        setPlaceholder('Notiek brīvo telpu ielāde...', true);
+
+        const params = new URLSearchParams({
+            datums_no: fields.datumsNo.value,
+            datums_lidz: fields.datumsLidz.value,
+            sakuma_laiks: fields.sakumaLaiks.value,
+            beigu_laiks: fields.beiguLaiks.value,
+        });
+
+        try {
+            const response = await fetch(`{{ route('pasakumi.availableRooms') }}?${params.toString()}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Neizdevās ielādēt telpas.');
+            }
+
+            const data = await response.json();
+
+            if (requestId !== activeRequest) {
+                return;
+            }
+
+            renderRooms(data.telpas ?? []);
+        } catch (error) {
+            if (requestId !== activeRequest) {
+                return;
+            }
+
+            setPlaceholder('Neizdevās ielādēt telpas. Mēģiniet vēlreiz.');
+        }
+    };
+
+    Object.values(fields).forEach((field) => {
+        field?.addEventListener('change', loadRooms);
+    });
+
+    loadRooms();
+});
+</script>
+@endpush
