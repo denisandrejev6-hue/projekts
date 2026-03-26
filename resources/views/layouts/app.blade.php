@@ -395,6 +395,21 @@
             box-shadow:0 0 0 4px rgba(137,111,140,.16);
             outline:none;
         }
+        .is-invalid,
+        input.is-invalid,
+        select.is-invalid,
+        textarea.is-invalid{
+            border-color:#c84f6f !important;
+            background:rgba(200,79,111,.08) !important;
+            box-shadow:0 0 0 4px rgba(200,79,111,.16);
+        }
+        .is-invalid:focus,
+        input.is-invalid:focus,
+        select.is-invalid:focus,
+        textarea.is-invalid:focus{
+            border-color:#b43d5c !important;
+            box-shadow:0 0 0 4px rgba(200,79,111,.22) !important;
+        }
         textarea{min-height:140px; resize:vertical}
 
         .form-row{
