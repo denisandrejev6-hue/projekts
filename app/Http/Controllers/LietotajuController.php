@@ -21,22 +21,27 @@ class LietotajuController extends Controller
 
     public function store(Request $request)
     {
+        $veidotajsIrAdmins = auth()->user()?->loma === 'Admin';
+
         $validated = $request->validate([
             'vards' => 'required|string|max:45',
             'uzvards' => 'required|string|max:25',
             'epasts' => 'required|email|max:50|unique:lietotaji,epasts',
             'password' => 'required|string|min:8|confirmed',
-            'loma' => 'required|in:Admin,Darbinieks,Lietotajs',
+            'loma' => $veidotajsIrAdmins
+                ? 'required|in:Admin,Darbinieks,Lietotajs'
+                : 'nullable',
         ]);
 
         $hashedPassword = Hash::make($validated['password']);
+        $jaunaLoma = $veidotajsIrAdmins ? $validated['loma'] : 'Lietotajs';
 
         Lietotajs::create([
             'vards' => $validated['vards'],
             'uzvards' => $validated['uzvards'],
             'epasts' => $validated['epasts'],
             'email' => $validated['epasts'],
-            'loma' => $validated['loma'],
+            'loma' => $jaunaLoma,
             'parole' => $hashedPassword,
             'password' => $hashedPassword,
             'aktivs' => 1,
