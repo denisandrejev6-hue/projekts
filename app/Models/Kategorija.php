@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kategorija extends Model
 {
-    // legacy table
+    // Modelis izmanto esošo tabulas nosaukumu no datubāzes.
     protected $table = 'kategorijas';
     protected $primaryKey = 'ID';
     public $incrementing = true;

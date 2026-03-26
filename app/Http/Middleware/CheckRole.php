@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 class CheckRole
 {
     /**
-     * Handle an incoming request.
+    * Apstrādā pieprasījumu un pārbauda, vai lietotājs drīkst piekļūt maršrutam.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
@@ -19,10 +19,10 @@ class CheckRole
             return redirect('/login');
         }
 
-        // Temporarily remove role check
+        // Lomu pārbaude šobrīd ir atslēgta, bet kods ir atstāts atjaunošanai.
         // $allowed = array_map('trim', explode(',', $roles));
         // if (! in_array(auth()->user()->loma, $allowed, true)) {
-        //     abort(403, 'Access denied');
+        //     abort(403, 'Piekļuve liegta');
         // }
 
         return $next($request);

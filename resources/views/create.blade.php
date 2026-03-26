@@ -183,6 +183,7 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // Formā visi nepieciešamie dati ir pieejami uzreiz, tāpēc filtrēšanu var veikt bez papildu pieprasījumiem.
     const darbinieki = @json($darbinieki->values());
     const telpas = @json($telpas->values());
     const aiznemtieLaiki = @json($aiznemtieLaiki->values());
@@ -197,6 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const telpaSelect = document.getElementById('telpa_id');
     const telpaStatuss = document.getElementById('telpa-statuss');
 
+    // Ja dati vēl nav izvēlēti vai intervāls nav korekts, izvēlnē rāda paskaidrojošu vietturi.
     const setPlaceholder = (select, statusElement, message, disabled = true) => {
         select.innerHTML = '';
         const option = document.createElement('option');
@@ -208,6 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         statusElement.textContent = message;
     };
 
+    // Viena un tā pati renderēšanas funkcija tiek izmantota gan telpām, gan darbiniekiem.
     const renderOptions = ({ items, select, selectedValue, emptyMessage, defaultMessage, labelBuilder, statusElement, successMessage }) => {
         select.innerHTML = '';
 
@@ -256,6 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     };
 
+    // Ja laiki vēl nav izvēlēti, filtrē tikai pēc datumiem.
     const getAvailableRooms = () => {
         return telpas.filter((room) => {
             return !aiznemtieLaiki.some((booking) => {
@@ -277,6 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // Darbinieku pieejamība tiek noteikta pēc tā paša pārklāšanās principa kā telpām.
     const getAvailableEmployees = () => {
         return darbinieki.filter((employee) => {
             return !aiznemtieLaiki.some((booking) => {
@@ -298,6 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // Pēc katras datuma vai laika maiņas pārrēķina pieejamās izvēles.
     const loadRooms = () => {
         if (!hasDateValues()) {
             setPlaceholder(darbinieksSelect, darbinieksStatuss, 'Vispirms izvēlieties pasākuma datumus');

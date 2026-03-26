@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Telpa extends Model
 {
-    // legacy table
+    // Modelis izmanto vēsturisko tabulas nosaukumu.
     protected $table = 'telpa';
     protected $primaryKey = 'ID';
     public $incrementing = true;

@@ -7,7 +7,7 @@ use Illuminate\Support\ServiceProvider;
 class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * Reģistrē lietotnes servisus.
      */
     public function register(): void
     {
@@ -15,19 +15,18 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Bootstrap any application services.
+     * Inicializē lietotnes konfigurāciju un pielāgotās validācijas.
      */
     public function boot(): void
     {
-        // set the application locale based on config (env)
+        // Lietotne un datumu formatēšana izmanto vienu un to pašu lokalizāciju.
         app()->setLocale(config('app.locale'));
 
-        // ensure Carbon uses the same locale for dates
         if (class_exists(\Carbon\Carbon::class)) {
             \Carbon\Carbon::setLocale(config('app.locale'));
         }
 
-        // custom validator: check that end time is not before start time
+        // Pārbauda, vai beigu laiks nav agrāks par sākuma laiku.
         \Illuminate\Support\Facades\Validator::extend('time_after_or_equal', function ($attribute, $value, $parameters, $validator) {
             $other = $validator->getData()[$parameters[0]] ?? null;
             
@@ -35,11 +34,11 @@ class AppServiceProvider extends ServiceProvider
                 return true;
             }
 
-            // compare times in H:i format
+            // Laiki tiek salīdzināti H:i formātā.
             return strtotime($value) >= strtotime($other);
         });
 
-        // custom validator: check that start time is not after end time
+        // Pārbauda, vai sākuma laiks nav vēlāk par beigu laiku.
         \Illuminate\Support\Facades\Validator::extend('time_before_or_equal', function ($attribute, $value, $parameters, $validator) {
             $other = $validator->getData()[$parameters[0]] ?? null;
             
@@ -47,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
                 return true;
             }
 
-            // compare times in H:i format
+            // Laiki tiek salīdzināti H:i formātā.
             return strtotime($value) <= strtotime($other);
         });
     }

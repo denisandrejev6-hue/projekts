@@ -6,8 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RezervesKopija extends Model
 {
-    // table name will be discovered at runtime; the database may use one of several
-    // variants (with or without underscore, plural, etc.).
+    // Tabulas nosaukums tiek noteikts izpildes laikā, jo datubāzē var būt vairāki varianti.
     protected $table;
     protected $primaryKey = 'ID';
     public $incrementing = true;
@@ -19,13 +18,13 @@ class RezervesKopija extends Model
     ];
 
     /**
-     * Determine the correct table name when the model is instantiated.
+     * Atrod pareizo tabulas nosaukumu, izveidojot modeli.
      */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
 
-        // try possible names in order of preference
+        // Pārbauda iespējamos nosaukumus prioritārā secībā.
         $possible = ['rezerves_kopija', 'rezerveskopija', 'rezerveskopijas'];
         foreach ($possible as $name) {
             if (\Illuminate\Support\Facades\Schema::hasTable($name)) {
@@ -34,7 +33,7 @@ class RezervesKopija extends Model
             }
         }
 
-        // fallback to the first variant if nothing exists; queries will then error
+        // Ja tabula nav atrasta, izmanto pirmo variantu kā noklusējumu.
         $this->table ??= $possible[0];
     }
 }

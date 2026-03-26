@@ -313,6 +313,7 @@ class PasakumuController extends Controller
 
     private function parbauditTelpu($telpaId, $datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId = null)
     {
+        // Saglabāšanas brīdī vēlreiz pārbauda, vai lietotājs nav izvēlējies aizņemtu telpu.
         $telpaPieejama = $this->pieejamasTelpas($datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId)
             ->contains('ID', (int) $telpaId);
 
@@ -325,6 +326,7 @@ class PasakumuController extends Controller
 
     private function parbauditDarbinieku($darbinieksId, $datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId = null)
     {
+        // Darbinieks drīkst būt atbildīgais tikai tad, ja viņam nav cita pārklājoša pasākuma.
         $darbinieksPieejams = $this->pieejamieDarbinieki($datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId)
             ->contains('ID', (int) $darbinieksId);
 
@@ -337,6 +339,7 @@ class PasakumuController extends Controller
 
     private function pieejamasTelpas($datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId = null)
     {
+        // Aizņemtās telpas tiek iegūtas no pārklājošiem pasākumiem tajā pašā periodā.
         $aiznemtasTelpas = $this->parklajosiesPasakumi($datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId)
             ->pluck('telpa_id');
 
@@ -348,6 +351,7 @@ class PasakumuController extends Controller
 
     private function pieejamieDarbinieki($datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId = null)
     {
+        // Darbinieks ir pieejams, ja nav atrasts nevienā pārklājošā pasākumā.
         $aiznemtieDarbinieki = $this->parklajosiesPasakumi($datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId)
             ->pluck('darbinieks_id');
 
@@ -362,6 +366,7 @@ class PasakumuController extends Controller
 
     private function aiznemtieResursuLaiki($ignoreId = null)
     {
+        // Forma izmanto šo sarakstu, lai klienta pusē filtrētu telpas un darbiniekus.
         return Pasakumi::query()
             ->when($ignoreId, fn ($query) => $query->where('ID', '!=', $ignoreId))
             ->get(['telpa_id', 'darbinieks_id', 'datums_no', 'datums_lidz', 'sakuma_laiks', 'beigu_laiks']);
@@ -369,6 +374,7 @@ class PasakumuController extends Controller
 
     private function parklajosiesPasakumi($datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId = null)
     {
+        // Pārklāšanās ir tad, ja sakrīt gan datumu intervāls, gan laika intervāls.
         return Pasakumi::query()
             ->when($ignoreId, fn ($query) => $query->where('ID', '!=', $ignoreId))
             ->where('datums_no', '<=', $datumsLidz)

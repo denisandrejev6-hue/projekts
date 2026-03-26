@@ -172,6 +172,7 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // Rediģēšanas forma izmanto to pašu pieejamības loģiku kā izveides forma.
     const darbinieki = @json($darbinieki->values());
     const telpas = @json($telpas->values());
     const aiznemtieLaiki = @json($aiznemtieLaiki->values());
@@ -186,6 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const telpaSelect = document.getElementById('telpa_id');
     const telpaStatuss = document.getElementById('telpa-statuss');
 
+    // Ja dati vēl nav izvēlēti vai intervāls nav korekts, izvēlnē rāda paskaidrojošu vietturi.
     const setPlaceholder = (select, statusElement, message, disabled = true) => {
         select.innerHTML = '';
         const option = document.createElement('option');
@@ -197,6 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
         statusElement.textContent = message;
     };
 
+    // Viena renderēšanas funkcija uztur vienādu uzvedību abiem select laukiem.
     const renderOptions = ({ items, select, selectedValue, emptyMessage, defaultMessage, labelBuilder, statusElement, successMessage }) => {
         select.innerHTML = '';
 
@@ -245,6 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     };
 
+    // Ja laiki vēl nav izvēlēti, filtrē tikai pēc datumu pārklāšanās.
     const getAvailableRooms = () => {
         return telpas.filter((room) => {
             return !aiznemtieLaiki.some((booking) => {
@@ -266,6 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // Darbinieku pieejamība tiek skaitīta no tiem pašiem pārklājošajiem pasākumiem.
     const getAvailableEmployees = () => {
         return darbinieki.filter((employee) => {
             return !aiznemtieLaiki.some((booking) => {
@@ -287,6 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // Pēc katras datuma vai laika maiņas atjauno brīvo telpu un darbinieku sarakstus.
     const loadRooms = () => {
         if (!hasDateValues()) {
             setPlaceholder(darbinieksSelect, darbinieksStatuss, 'Vispirms izvēlieties pasākuma datumus');

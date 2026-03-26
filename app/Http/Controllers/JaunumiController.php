@@ -108,7 +108,8 @@ class JaunumiController extends Controller
         return redirect()->route('jaunumi.index')->with('success', 'Ziņa veiksmīgi atjaunināta.');
     }
 
-    /**     * Parāda konkrēta jaunuma detaļas
+    /**
+     * Parāda konkrēta jaunuma detaļas.
      */
     public function show($id)
     {
@@ -116,7 +117,8 @@ class JaunumiController extends Controller
         return view('jaunumi.show', ['item' => $item]);
     }
 
-    /**     * Izdzēš ziņu no datubāzes
+    /**
+     * Izdzēš ziņu no datubāzes.
      */
     public function destroy($id)
     {
@@ -126,7 +128,7 @@ class JaunumiController extends Controller
 
         $item = Jaunumi::findOrFail($id);
 
-        // Delete associated images
+        // Pirms ziņas dzēšanas noņem arī saistītos attēlu failus un ierakstus.
         foreach ($item->images as $image) {
             Storage::disk('public')->delete($image->image_path);
             $image->delete();
@@ -138,7 +140,7 @@ class JaunumiController extends Controller
     }
 
     /**
-     * Delete a specific image from a jaunumi.
+        * Izdzēš konkrētu attēlu no jaunuma.
      */
     public function deleteImage($jaunumiId, $imageId)
     {
