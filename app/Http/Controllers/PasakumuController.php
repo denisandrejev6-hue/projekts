@@ -36,7 +36,7 @@ class PasakumuController extends Controller
             ->get();
 
         $telpas = Telpa::orderBy('nosaukums')->get(['ID', 'nosaukums', 'ietilpiba']);
-        $aiznemtieLaiki = $this->aiznemtieTelpuLaiki();
+        $aiznemtieLaiki = $this->aiznemtieResursuLaiki();
 
         return view('create', compact('darbinieki', 'telpas', 'aiznemtieLaiki'));
     }
@@ -154,7 +154,7 @@ class PasakumuController extends Controller
             ->get();
 
         $telpas = Telpa::orderBy('nosaukums')->get(['ID', 'nosaukums', 'ietilpiba']);
-        $aiznemtieLaiki = $this->aiznemtieTelpuLaiki($id);
+        $aiznemtieLaiki = $this->aiznemtieResursuLaiki($id);
 
         return view('edit', compact('item', 'darbinieki', 'telpas', 'aiznemtieLaiki'));
     }
@@ -325,17 +325,10 @@ class PasakumuController extends Controller
 
     private function parbauditDarbinieku($darbinieksId, $datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId = null)
     {
-        $query = Pasakumi::where('darbinieks_id', $darbinieksId)
-            ->where('datums_no', '<=', $datumsLidz)
-            ->where('datums_lidz', '>=', $datumsNo)
-            ->where('sakuma_laiks', '<', $beiguLaiks)
-            ->where('beigu_laiks', '>', $sakumaLaiks);
+        $darbinieksPieejams = $this->pieejamieDarbinieki($datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId)
+            ->contains('ID', (int) $darbinieksId);
 
-        if ($ignoreId) {
-            $query->where('ID', '!=', $ignoreId);
-        }
-
-        if ($query->exists()) {
+        if (!$darbinieksPieejams) {
             throw ValidationException::withMessages([
                 'darbinieks_id' => 'Izvēlētais darbinieks šajā laikā jau ir aizņemts.',
             ]);
@@ -344,12 +337,7 @@ class PasakumuController extends Controller
 
     private function pieejamasTelpas($datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId = null)
     {
-        $aiznemtasTelpas = Pasakumi::query()
-            ->when($ignoreId, fn ($query) => $query->where('ID', '!=', $ignoreId))
-            ->where('datums_no', '<=', $datumsLidz)
-            ->where('datums_lidz', '>=', $datumsNo)
-            ->where('sakuma_laiks', '<', $beiguLaiks)
-            ->where('beigu_laiks', '>', $sakumaLaiks)
+        $aiznemtasTelpas = $this->parklajosiesPasakumi($datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId)
             ->pluck('telpa_id');
 
         return Telpa::query()
@@ -358,11 +346,36 @@ class PasakumuController extends Controller
             ->get(['ID', 'nosaukums', 'ietilpiba']);
     }
 
-    private function aiznemtieTelpuLaiki($ignoreId = null)
+    private function pieejamieDarbinieki($datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId = null)
+    {
+        $aiznemtieDarbinieki = $this->parklajosiesPasakumi($datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId)
+            ->pluck('darbinieks_id');
+
+        return Lietotajs::query()
+            ->whereIn('loma', ['Admin', 'Darbinieks'])
+            ->where('aktivs', 1)
+            ->whereNotIn('ID', $aiznemtieDarbinieki)
+            ->orderBy('vards')
+            ->orderBy('uzvards')
+            ->get(['ID', 'vards', 'uzvards']);
+    }
+
+    private function aiznemtieResursuLaiki($ignoreId = null)
     {
         return Pasakumi::query()
             ->when($ignoreId, fn ($query) => $query->where('ID', '!=', $ignoreId))
-            ->get(['telpa_id', 'datums_no', 'datums_lidz', 'sakuma_laiks', 'beigu_laiks']);
+            ->get(['telpa_id', 'darbinieks_id', 'datums_no', 'datums_lidz', 'sakuma_laiks', 'beigu_laiks']);
+    }
+
+    private function parklajosiesPasakumi($datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId = null)
+    {
+        return Pasakumi::query()
+            ->when($ignoreId, fn ($query) => $query->where('ID', '!=', $ignoreId))
+            ->where('datums_no', '<=', $datumsLidz)
+            ->where('datums_lidz', '>=', $datumsNo)
+            ->where('sakuma_laiks', '<', $beiguLaiks)
+            ->where('beigu_laiks', '>', $sakumaLaiks)
+            ->get(['telpa_id', 'darbinieks_id', 'datums_no', 'datums_lidz', 'sakuma_laiks', 'beigu_laiks']);
     }
 
     private function varPieteikties($lietotajs, $pasakums, $esosaisPieteikums = null): bool

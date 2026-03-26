@@ -106,7 +106,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Atbildīgais darbinieks</label>
-                <select name="darbinieks_id" class="form-control" required>
+                <select name="darbinieks_id" id="darbinieks_id" class="form-control" data-selected-employee="{{ old('darbinieks_id', $item->darbinieks_id) }}" required>
                     <option value="">-- Izvēlieties darbinieku --</option>
                     @foreach($darbinieki as $d)
                         <option value="{{ $d->ID }}" {{ old('darbinieks_id', $item->darbinieks_id) == $d->ID ? 'selected' : '' }}>
@@ -114,6 +114,9 @@
                         </option>
                     @endforeach
                 </select>
+                <small id="darbinieks-statuss" style="display:block; margin-top:8px; color:var(--clr-text-muted, #666);">
+                    Redzami tikai brīvie darbinieki izvēlētajā laikā.
+                </small>
             </div>
 
             <div class="form-group">
@@ -169,6 +172,7 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    const darbinieki = @json($darbinieki->values());
     const telpas = @json($telpas->values());
     const aiznemtieLaiki = @json($aiznemtieLaiki->values());
     const fields = {
@@ -177,46 +181,44 @@ document.addEventListener('DOMContentLoaded', () => {
         sakumaLaiks: document.querySelector('select[name="sakuma_laiks"]'),
         beiguLaiks: document.querySelector('select[name="beigu_laiks"]'),
     };
+    const darbinieksSelect = document.getElementById('darbinieks_id');
+    const darbinieksStatuss = document.getElementById('darbinieks-statuss');
     const telpaSelect = document.getElementById('telpa_id');
     const telpaStatuss = document.getElementById('telpa-statuss');
 
-    const setPlaceholder = (message, disabled = true) => {
-        telpaSelect.innerHTML = '';
+    const setPlaceholder = (select, statusElement, message, disabled = true) => {
+        select.innerHTML = '';
         const option = document.createElement('option');
         option.value = '';
         option.textContent = message;
-        telpaSelect.appendChild(option);
-        telpaSelect.value = '';
-        telpaSelect.disabled = disabled;
-        telpaStatuss.textContent = message;
+        select.appendChild(option);
+        select.value = '';
+        select.disabled = disabled;
+        statusElement.textContent = message;
     };
 
-    const renderRooms = (rooms, selectedRoom) => {
-        telpaSelect.innerHTML = '';
+    const renderOptions = ({ items, select, selectedValue, emptyMessage, defaultMessage, labelBuilder, statusElement, successMessage }) => {
+        select.innerHTML = '';
 
         const placeholder = document.createElement('option');
         placeholder.value = '';
-        placeholder.textContent = rooms.length
-            ? '-- Izvēlieties telpu --'
-            : 'Šajā laikā nav nevienas brīvas telpas';
-        telpaSelect.appendChild(placeholder);
+        placeholder.textContent = items.length ? defaultMessage : emptyMessage;
+        select.appendChild(placeholder);
 
-        rooms.forEach((room) => {
+        items.forEach((item) => {
             const option = document.createElement('option');
-            option.value = room.ID;
-            option.textContent = `${room.nosaukums} (ietilpība: ${room.ietilpiba ?? 'nav norādīta'})`;
+            option.value = item.ID;
+            option.textContent = labelBuilder(item);
 
-            if (String(room.ID) === String(selectedRoom)) {
+            if (String(item.ID) === String(selectedValue)) {
                 option.selected = true;
             }
 
-            telpaSelect.appendChild(option);
+            select.appendChild(option);
         });
 
-        telpaSelect.disabled = rooms.length === 0;
-        telpaStatuss.textContent = rooms.length
-            ? 'Redzamas tikai brīvās telpas izvēlētajā laikā.'
-            : 'Šajā laikā nav nevienas brīvas telpas.';
+        select.disabled = items.length === 0;
+        statusElement.textContent = items.length ? successMessage : emptyMessage;
     };
 
     const hasDateValues = () => {
@@ -264,21 +266,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    const getAvailableEmployees = () => {
+        return darbinieki.filter((employee) => {
+            return !aiznemtieLaiki.some((booking) => {
+                const dateOverlap = booking.datums_no <= fields.datumsLidz.value
+                    && booking.datums_lidz >= fields.datumsNo.value;
+
+                if (!dateOverlap) {
+                    return false;
+                }
+
+                if (!hasTimeValues()) {
+                    return String(booking.darbinieks_id) === String(employee.ID);
+                }
+
+                return String(booking.darbinieks_id) === String(employee.ID)
+                    && booking.sakuma_laiks < fields.beiguLaiks.value
+                    && booking.beigu_laiks > fields.sakumaLaiks.value;
+            });
+        });
+    };
+
     const loadRooms = () => {
         if (!hasDateValues()) {
-            setPlaceholder('Vispirms izvēlieties pasākuma datumus');
+            setPlaceholder(darbinieksSelect, darbinieksStatuss, 'Vispirms izvēlieties pasākuma datumus');
+            setPlaceholder(telpaSelect, telpaStatuss, 'Vispirms izvēlieties pasākuma datumus');
             return;
         }
 
         if (!isValidRange()) {
-            setPlaceholder('Pārbaudiet, lai beigu datums un laiks būtu pēc sākuma');
+            setPlaceholder(darbinieksSelect, darbinieksStatuss, 'Pārbaudiet, lai beigu datums un laiks būtu pēc sākuma');
+            setPlaceholder(telpaSelect, telpaStatuss, 'Pārbaudiet, lai beigu datums un laiks būtu pēc sākuma');
             return;
         }
 
+        const selectedEmployee = darbinieksSelect.value || darbinieksSelect.dataset.selectedEmployee;
         const selectedRoom = telpaSelect.value;
-        renderRooms(getAvailableRooms(), selectedRoom);
+        renderOptions({
+            items: getAvailableEmployees(),
+            select: darbinieksSelect,
+            selectedValue: selectedEmployee,
+            emptyMessage: 'Šajā laikā nav neviena brīva darbinieka',
+            defaultMessage: '-- Izvēlieties darbinieku --',
+            labelBuilder: (employee) => `${employee.vards} ${employee.uzvards}`,
+            statusElement: darbinieksStatuss,
+            successMessage: 'Redzami tikai brīvie darbinieki izvēlētajā laikā.',
+        });
+        renderOptions({
+            items: getAvailableRooms(),
+            select: telpaSelect,
+            selectedValue: selectedRoom,
+            emptyMessage: 'Šajā laikā nav nevienas brīvas telpas',
+            defaultMessage: '-- Izvēlieties telpu --',
+            labelBuilder: (room) => `${room.nosaukums} (ietilpība: ${room.ietilpiba ?? 'nav norādīta'})`,
+            statusElement: telpaStatuss,
+            successMessage: 'Redzamas tikai brīvās telpas izvēlētajā laikā.',
+        });
 
         if (!hasTimeValues()) {
+            darbinieksStatuss.textContent = 'Darbinieki atlasīti pēc datuma. Norādiet laikus, lai precizētu pieejamību.';
             telpaStatuss.textContent = 'Telpas atlasītas pēc datuma. Norādiet laikus, lai precizētu pieejamību.';
         }
     };
