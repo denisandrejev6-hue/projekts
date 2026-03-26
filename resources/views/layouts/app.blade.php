@@ -141,8 +141,12 @@
             display:flex;
             align-items:center;
             gap:12px;
-            flex-wrap:wrap;
+            flex-wrap:nowrap;
             justify-content:flex-end;
+        }
+        .user-panel form{
+            width:auto;
+            margin:0;
         }
 
         .user-chip{
