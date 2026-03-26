@@ -10,6 +10,7 @@ use App\Models\PasakumuPieteikums;
 use App\Models\Telpa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 
 class PasakumuController extends Controller
@@ -34,9 +35,30 @@ class PasakumuController extends Controller
             ->orderBy('uzvards')
             ->get();
 
-        $telpas = Telpa::orderBy('nosaukums')->get();
+        $telpas = collect();
 
         return view('create', compact('darbinieki', 'telpas'));
+    }
+
+    public function availableRooms(Request $request)
+    {
+        $validated = $request->validate([
+            'datums_no' => 'required|date',
+            'datums_lidz' => 'required|date|after_or_equal:datums_no',
+            'sakuma_laiks' => 'required|date_format:H:i',
+            'beigu_laiks' => 'required|date_format:H:i|after:sakuma_laiks',
+            'ignore_id' => 'nullable|integer|exists:pasakumi,ID',
+        ]);
+
+        return response()->json([
+            'telpas' => $this->pieejamasTelpas(
+                $validated['datums_no'],
+                $validated['datums_lidz'],
+                $validated['sakuma_laiks'],
+                $validated['beigu_laiks'],
+                $validated['ignore_id'] ?? null
+            )->values(),
+        ]);
     }
 
     public function store(Request $request)
@@ -289,18 +311,13 @@ class PasakumuController extends Controller
 
     private function parbauditTelpu($telpaId, $datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId = null)
     {
-        $query = Pasakumi::where('telpa_id', $telpaId)
-            ->where('datums_no', '<=', $datumsLidz)
-            ->where('datums_lidz', '>=', $datumsNo)
-            ->where('sakuma_laiks', '<', $beiguLaiks)
-            ->where('beigu_laiks', '>', $sakumaLaiks);
+        $telpaPieejama = $this->pieejamasTelpas($datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId)
+            ->contains('ID', (int) $telpaId);
 
-        if ($ignoreId) {
-            $query->where('ID', '!=', $ignoreId);
-        }
-
-        if ($query->exists()) {
-            return abort(422, 'Izvēlētā telpa šajā laikā nav brīva.');
+        if (!$telpaPieejama) {
+            throw ValidationException::withMessages([
+                'telpa_id' => 'Izvēlētā telpa šajā laikā nav brīva.',
+            ]);
         }
     }
 
@@ -317,8 +334,26 @@ class PasakumuController extends Controller
         }
 
         if ($query->exists()) {
-            return abort(422, 'Izvēlētais darbinieks šajā laikā jau ir aizņemts.');
+            throw ValidationException::withMessages([
+                'darbinieks_id' => 'Izvēlētais darbinieks šajā laikā jau ir aizņemts.',
+            ]);
         }
+    }
+
+    private function pieejamasTelpas($datumsNo, $datumsLidz, $sakumaLaiks, $beiguLaiks, $ignoreId = null)
+    {
+        $aiznemtasTelpas = Pasakumi::query()
+            ->when($ignoreId, fn ($query) => $query->where('ID', '!=', $ignoreId))
+            ->where('datums_no', '<=', $datumsLidz)
+            ->where('datums_lidz', '>=', $datumsNo)
+            ->where('sakuma_laiks', '<', $beiguLaiks)
+            ->where('beigu_laiks', '>', $sakumaLaiks)
+            ->pluck('telpa_id');
+
+        return Telpa::query()
+            ->whereNotIn('ID', $aiznemtasTelpas)
+            ->orderBy('nosaukums')
+            ->get(['ID', 'nosaukums', 'ietilpiba']);
     }
 
     private function varPieteikties($lietotajs, $pasakums, $esosaisPieteikums = null): bool

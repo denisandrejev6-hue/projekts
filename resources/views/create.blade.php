@@ -122,19 +122,6 @@
 </div>
 
 <div class="form-group">
-    <label>Telpa</label>
-    <select name="telpa_id" class="form-control">
-        <option value="">-- Izvēlieties telpu --</option>
-        @foreach($telpas as $t)
-            <option value="{{ $t->ID }}">
-                {{ $t->nosaukums }} (ietilpība: {{ $t->ietilpiba }})
-            </option>
-        @endforeach
-    </select>
-</div>
-        </div>
-
-            <div class="form-group">
     <label>Telpa <span class="required-star">*</span></label>
     <select name="telpa_id" class="form-control @error('telpa_id') is-invalid @enderror">
         <option value="">-- Izvēlieties telpu --</option>
@@ -148,6 +135,7 @@
         <span class="invalid-feedback">{{ $message }}</span>
     @enderror
 </div>
+        </div>
         </div>
 
         <div class="form-group" style="margin-bottom:24px;">
