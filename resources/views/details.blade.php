@@ -80,6 +80,29 @@
                 </div>
             </div>
         @endif
+        @if(auth()->check() && in_array(auth()->user()->loma, ['Admin', 'Darbinieks']))
+            <div style="margin-bottom: 24px; padding: 16px; border-radius: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);">
+                <div style="margin-bottom: 12px; font-weight: 600; color: var(--clr-text-muted);">
+                    Pieteiktie lietotāji ({{ $data->aktiviePieteikumi->count() }})
+                </div>
+
+                @forelse($data->aktiviePieteikumi as $pieteikums)
+                    <div style="padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.08);">
+                        <div style="font-weight: 600; color: var(--clr-text-light);">
+                            {{ trim(($pieteikums->lietotajs->vards ?? '') . ' ' . ($pieteikums->lietotajs->uzvards ?? '')) ?: 'Lietotājs nav atrasts' }}
+                        </div>
+                        <div style="font-size: 0.95rem; color: var(--clr-text-muted);">
+                            E-pasts: {{ $pieteikums->lietotajs->epasts ?? $pieteikums->lietotajs->email ?? 'Nav norādīts' }}
+                        </div>
+                        <div style="font-size: 0.95rem; color: var(--clr-text-muted);">
+                            Statuss: {{ $pieteikums->statuss }}
+                        </div>
+                    </div>
+                @empty
+                    <div style="color: var(--clr-text-muted);">Šim pasākumam vēl nav pieteicies neviens lietotājs.</div>
+                @endforelse
+            </div>
+        @endif
         <div style="text-align:center; margin-top: 18px;">
             <a href="{{ route('pasakumi.index') }}" class="btn secondary" style="font-size:1.1rem; padding: 10px 32px; border-radius: 8px;">Atpakaļ uz sarakstu</a>
         </div>

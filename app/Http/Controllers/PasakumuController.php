@@ -119,7 +119,7 @@ class PasakumuController extends Controller
             'darbinieks',
             'telpa',
             'atsauksmes.lietotajs',
-            'aktiviePieteikumi'
+            'aktiviePieteikumi.lietotajs'
         ])->findOrFail($id);
 
         $lietotajaPieteikums = null;
