@@ -6,7 +6,7 @@
 
     <p><strong>ID:</strong> {{ $data->ID }}</p>
     <p><strong>Fails:</strong> {{ $data->fails }}</p>
-    <p><strong>Izveides datums:</strong> {{ $data->izveides_datums }}</p>
+    <p><strong>Izveides datums:</strong> {{ \Carbon\Carbon::parse($data->izveides_datums)->format('d.m.Y') }}</p>
 
     <div style="display:flex; gap:12px; margin-top:24px;">
         <a href="{{ route('rezerveskopijas.edit', $data->ID) }}" class="btn">Rediģēt</a>

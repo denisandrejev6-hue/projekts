@@ -103,6 +103,12 @@ class PasakumuController extends Controller
             $validated['sakuma_laiks']
         );
 
+        $this->parbauditLaikaSoli([
+            'sakuma_laiks' => $validated['sakuma_laiks'],
+            'beigu_laiks' => $validated['beigu_laiks'],
+            'registracijas_beigu_laiks' => $validated['registracijas_beigu_laiks'] ?? null,
+        ]);
+
         $this->parbauditAtteluSkaitu($request);
 
         $pasakums = Pasakumi::create($validated);
@@ -213,6 +219,12 @@ class PasakumuController extends Controller
             $validated['datums_no'],
             $validated['sakuma_laiks']
         );
+
+        $this->parbauditLaikaSoli([
+            'sakuma_laiks' => $validated['sakuma_laiks'],
+            'beigu_laiks' => $validated['beigu_laiks'],
+            'registracijas_beigu_laiks' => $validated['registracijas_beigu_laiks'] ?? null,
+        ]);
 
         $item = Pasakumi::findOrFail($id);
         $this->parbauditAtteluSkaitu($request, $item->images()->count());
@@ -378,6 +390,27 @@ class PasakumuController extends Controller
                 'registracijas_beigu_datums' => 'Reģistrācijas beigu datums un laiks nedrīkst būt pēc pasākuma sākuma.',
                 'registracijas_beigu_laiks' => 'Reģistrācijas beigu datums un laiks nedrīkst būt pēc pasākuma sākuma.',
             ]);
+        }
+    }
+
+    private function parbauditLaikaSoli(array $laiki): void
+    {
+        $kludas = [];
+
+        foreach ($laiki as $lauks => $laiks) {
+            if (!$laiks) {
+                continue;
+            }
+
+            $minutes = Carbon::parse($laiks)->format('i');
+
+            if (!in_array($minutes, ['00', '30'], true)) {
+                $kludas[$lauks] = 'Laiku var izvēlēties tikai pilnās stundās vai pusstundās.';
+            }
+        }
+
+        if ($kludas) {
+            throw ValidationException::withMessages($kludas);
         }
     }
 

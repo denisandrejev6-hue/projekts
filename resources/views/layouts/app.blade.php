@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta http-equiv="Content-Language" content="lv-LV">
     <title>@yield('title', 'Bibliotēkas sistēma')</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
     <style>
         :root{
@@ -473,6 +474,50 @@
             background:rgba(255,255,255,.8) !important;
         }
 
+        .flatpickr-calendar{
+            border:none;
+            border-radius:18px;
+            box-shadow:0 18px 45px rgba(44,33,47,.18);
+            overflow:hidden;
+        }
+        .flatpickr-months{
+            background:linear-gradient(135deg,var(--c1),var(--c2));
+            color:#fff;
+        }
+        .flatpickr-current-month .flatpickr-monthDropdown-months,
+        .flatpickr-current-month input.cur-year{
+            color:#fff;
+            font-weight:700;
+        }
+        .flatpickr-weekdays{
+            background:rgba(169,165,186,.18);
+        }
+        .flatpickr-weekday{
+            color:var(--c1) !important;
+            font-weight:700;
+        }
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange,
+        .flatpickr-day.selected:hover{
+            background:linear-gradient(135deg,var(--c1),var(--c2));
+            border-color:var(--c1);
+        }
+        .flatpickr-day.today{
+            border-color:var(--c2);
+            color:var(--c1);
+        }
+        .flatpickr-time input:hover,
+        .flatpickr-time .flatpickr-am-pm:hover,
+        .flatpickr-time input:focus,
+        .flatpickr-time .flatpickr-am-pm:focus{
+            background:rgba(169,165,186,.16);
+        }
+        .flatpickr-alt-input[readonly],
+        .flatpickr-alt-input{
+            background:rgba(255,255,255,.82);
+        }
+
         .footer{
             margin-top:auto;
             border-top:1px solid rgba(93,69,95,.12);
@@ -587,6 +632,57 @@
         </div>
     </footer>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/lv.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    if (!window.flatpickr) {
+        return;
+    }
+
+    if (flatpickr.l10ns && flatpickr.l10ns.lv) {
+        flatpickr.localize(flatpickr.l10ns.lv);
+    }
+
+    document.querySelectorAll('input[data-picker="date"]').forEach((input) => {
+        if (input.dataset.pickerInitialized === 'true') {
+            return;
+        }
+
+        flatpickr(input, {
+            locale: 'lv',
+            dateFormat: 'Y-m-d',
+            altInput: true,
+            altFormat: 'd.m.Y',
+            altInputClass: input.className,
+            allowInput: true,
+            disableMobile: true,
+            monthSelectorType: 'dropdown',
+        });
+
+        input.dataset.pickerInitialized = 'true';
+    });
+
+    document.querySelectorAll('input[data-picker="time"]').forEach((input) => {
+        if (input.dataset.pickerInitialized === 'true') {
+            return;
+        }
+
+        flatpickr(input, {
+            locale: 'lv',
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: 'H:i',
+            time_24hr: true,
+            minuteIncrement: 30,
+            allowInput: true,
+            disableMobile: true,
+        });
+
+        input.dataset.pickerInitialized = 'true';
+    });
+});
+</script>
 @stack('scripts')
 </body>
 </html>

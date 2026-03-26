@@ -33,7 +33,7 @@
 
         <div class="form-control" style="margin-bottom:16px;">
             <label style="font-weight:700; display:block; margin-bottom:8px;">Publicēšanas datums:</label>
-            <input type="date" name="publicets_datums" value="{{ old('publicets_datums', $item->publicets_datums) }}" lang="lv-LV" style="width:100%; padding:10px; border-radius:6px;">
+            <input type="text" name="publicets_datums" value="{{ old('publicets_datums', $item->publicets_datums) }}" data-picker="date" placeholder="dd.mm.gggg" autocomplete="off" style="width:100%; padding:10px; border-radius:6px;">
         </div>
 
         <!-- Esošie attēli -->

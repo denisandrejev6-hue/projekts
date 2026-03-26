@@ -36,65 +36,36 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Datums no</label>
-                <input type="date" name="datums_no" value="{{ old('datums_no', $item->datums_no) }}" class="form-control" lang="lv-LV" required>
+                <input type="text" name="datums_no" value="{{ old('datums_no', $item->datums_no) }}" class="form-control" data-picker="date" placeholder="dd.mm.gggg" autocomplete="off" required>
             </div>
 
             <div class="form-group">
                 <label>Datums līdz</label>
-                <input type="date" name="datums_lidz" value="{{ old('datums_lidz', $item->datums_lidz) }}" class="form-control" lang="lv-LV" required>
+                <input type="text" name="datums_lidz" value="{{ old('datums_lidz', $item->datums_lidz) }}" class="form-control" data-picker="date" placeholder="dd.mm.gggg" autocomplete="off" required>
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group">
                 <label>Sākuma laiks</label>
-                <select name="sakuma_laiks" class="form-control" required>
-                    @for($h = 0; $h < 24; $h++)
-                        @for($m = 0; $m < 60; $m += 15)
-                            @php $time = sprintf('%02d:%02d', $h, $m); @endphp
-                            <option value="{{ $time }}" {{ old('sakuma_laiks', \Carbon\Carbon::parse($item->sakuma_laiks)->format('H:i')) == $time ? 'selected' : '' }}>
-                                {{ $time }}
-                            </option>
-                        @endfor
-                    @endfor
-                </select>
+                <input type="text" name="sakuma_laiks" value="{{ old('sakuma_laiks', \Carbon\Carbon::parse($item->sakuma_laiks)->format('H:i')) }}" class="form-control" data-picker="time" placeholder="hh:mm" autocomplete="off" required>
             </div>
 
             <div class="form-group">
                 <label>Beigu laiks</label>
-                <select name="beigu_laiks" class="form-control" required>
-                    @for($h = 0; $h < 24; $h++)
-                        @for($m = 0; $m < 60; $m += 15)
-                            @php $time = sprintf('%02d:%02d', $h, $m); @endphp
-                            <option value="{{ $time }}" {{ old('beigu_laiks', \Carbon\Carbon::parse($item->beigu_laiks)->format('H:i')) == $time ? 'selected' : '' }}>
-                                {{ $time }}
-                            </option>
-                        @endfor
-                    @endfor
-                </select>
+                <input type="text" name="beigu_laiks" value="{{ old('beigu_laiks', \Carbon\Carbon::parse($item->beigu_laiks)->format('H:i')) }}" class="form-control" data-picker="time" placeholder="hh:mm" autocomplete="off" required>
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group">
                 <label>Reģistrācijas beigu datums</label>
-                <input type="date" name="registracijas_beigu_datums" value="{{ old('registracijas_beigu_datums', $item->registracijas_beigu_datums) }}" class="form-control" lang="lv-LV">
+                <input type="text" name="registracijas_beigu_datums" value="{{ old('registracijas_beigu_datums', $item->registracijas_beigu_datums) }}" class="form-control" data-picker="date" placeholder="dd.mm.gggg" autocomplete="off">
             </div>
 
             <div class="form-group">
                 <label>Reģistrācijas beigu laiks</label>
-                <select name="registracijas_beigu_laiks" class="form-control">
-                    <option value="">-- Izvēlieties --</option>
-                    @for($h = 0; $h < 24; $h++)
-                        @for($m = 0; $m < 60; $m += 15)
-                            @php $time = sprintf('%02d:%02d', $h, $m); @endphp
-                            <option value="{{ $time }}"
-                                {{ old('registracijas_beigu_laiks', $item->registracijas_beigu_laiks ? \Carbon\Carbon::parse($item->registracijas_beigu_laiks)->format('H:i') : '') == $time ? 'selected' : '' }}>
-                                {{ $time }}
-                            </option>
-                        @endfor
-                    @endfor
-                </select>
+                <input type="text" name="registracijas_beigu_laiks" value="{{ old('registracijas_beigu_laiks', $item->registracijas_beigu_laiks ? \Carbon\Carbon::parse($item->registracijas_beigu_laiks)->format('H:i') : '') }}" class="form-control" data-picker="time" placeholder="hh:mm" autocomplete="off">
             </div>
         </div>
         <small style="display:block; margin-top:-14px; margin-bottom:24px; color:var(--clr-text-muted, #666);">
@@ -191,8 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const fields = {
         datumsNo: document.querySelector('input[name="datums_no"]'),
         datumsLidz: document.querySelector('input[name="datums_lidz"]'),
-        sakumaLaiks: document.querySelector('select[name="sakuma_laiks"]'),
-        beiguLaiks: document.querySelector('select[name="beigu_laiks"]'),
+        sakumaLaiks: document.querySelector('input[name="sakuma_laiks"]'),
+        beiguLaiks: document.querySelector('input[name="beigu_laiks"]'),
     };
     const darbinieksSelect = document.getElementById('darbinieks_id');
     const darbinieksStatuss = document.getElementById('darbinieks-statuss');

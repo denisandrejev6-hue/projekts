@@ -22,7 +22,7 @@
             @foreach($data as $item)
                 <tr>
                     <td style="text-align:center;">{{ $item->fails }}</td>
-                    <td style="text-align:center;">{{ $item->izveides_datums }}</td>
+                    <td style="text-align:center;">{{ \Carbon\Carbon::parse($item->izveides_datums)->format('d.m.Y') }}</td>
                     <td style="text-align:center;">
                             <div style="display:flex; gap:8px; justify-content:center; align-items:center;">
                                 <a href="{{ route('rezerveskopijas.edit', $item->ID) }}" class="btn edit">Rediģēt</a>
