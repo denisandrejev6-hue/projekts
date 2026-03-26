@@ -64,7 +64,7 @@
                         Pieteikties pasākumam
                     </button>
                 </form>
-            @else
+            @elseif(!auth()->check() || auth()->user()->loma === 'Lietotajs')
                 <button type="button" class="btn secondary" style="width: 100%; padding: 12px 18px; border-radius: 10px; opacity: 0.7; cursor: not-allowed;" disabled>
                     Pieteikšanās nav pieejama
                 </button>

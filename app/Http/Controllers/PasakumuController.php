@@ -416,6 +416,17 @@ class PasakumuController extends Controller
             ];
         }
 
+        if ($lietotajs->loma !== 'Lietotajs') {
+            return [
+                'varPieteikties' => false,
+                'iemesls' => 'Pasākumam var pieteikties tikai reģistrētie lietotāji.',
+                'aiznemtasVietas' => $aiznemtasVietas,
+                'brivasVietas' => $brivasVietas,
+                'ietilpiba' => $ietilpiba,
+                'registracijasBeigas' => $this->registracijasBeigas($pasakums),
+            ];
+        }
+
         if ($esosaisPieteikums) {
             return [
                 'varPieteikties' => false,
