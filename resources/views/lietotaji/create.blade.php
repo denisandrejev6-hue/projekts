@@ -63,7 +63,6 @@
                         Lietotājs
                     </div>
                     <small style="display:block; margin-top:8px; color:var(--clr-text-muted, #666);">
-                        Darbinieks var pievienot tikai lietotāja lomas kontu.
                     </small>
                 </div>
             @endif
