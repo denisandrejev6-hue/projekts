@@ -96,6 +96,8 @@ class PasakumuController extends Controller
             $validated['beigu_laiks']
         );
 
+        $this->parbauditAtteluSkaitu($request);
+
         $pasakums = Pasakumi::create($validated);
 
         if ($request->hasFile('images')) {
@@ -199,6 +201,7 @@ class PasakumuController extends Controller
         );
 
         $item = Pasakumi::findOrFail($id);
+        $this->parbauditAtteluSkaitu($request, $item->images()->count());
         $item->update($validated);
 
         if ($request->hasFile('images')) {
@@ -332,6 +335,17 @@ class PasakumuController extends Controller
         if (!$darbinieksPieejams) {
             throw ValidationException::withMessages([
                 'darbinieks_id' => 'Izvēlētais darbinieks šajā laikā jau ir aizņemts.',
+            ]);
+        }
+    }
+
+    private function parbauditAtteluSkaitu(Request $request, int $esošoAtteluSkaits = 0): void
+    {
+        $jaunoAtteluSkaits = count($request->file('images', []));
+
+        if ($esošoAtteluSkaits + $jaunoAtteluSkaits > 10) {
+            throw ValidationException::withMessages([
+                'images' => 'Pasākumam drīkst pievienot ne vairāk kā 10 attēlus kopā.',
             ]);
         }
     }

@@ -155,8 +155,17 @@
         @endif
 
         <div class="form-group" style="margin-bottom:24px;">
-            <label>Pievienot jaunus attēlus</label>
+            <label>Pievienot jaunus attēlus (vēl var pievienot {{ max(10 - $item->images->count(), 0) }})</label>
             <input type="file" name="images[]" multiple accept="image/*" class="form-control">
+            <small style="display:block; margin-top:8px; color:var(--clr-text-muted, #666);">
+                Kopējais attēlu skaits vienam pasākumam nedrīkst pārsniegt 10.
+            </small>
+            @error('images')
+                <span class="invalid-feedback" style="display:block;">{{ $message }}</span>
+            @enderror
+            @error('images.*')
+                <span class="invalid-feedback" style="display:block;">{{ $message }}</span>
+            @enderror
         </div>
 
         <div class="form-actions">

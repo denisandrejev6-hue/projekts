@@ -164,6 +164,9 @@
             <label>Attēli (maksimums 10, katrs līdz 2MB)</label>
             <input type="file" name="images[]" multiple accept="image/*"
                 class="form-control @error('images') is-invalid @enderror">
+            <small style="display:block; margin-top:8px; color:var(--clr-text-muted, #666);">
+                Vienam pasākumam var pievienot līdz 10 attēliem.
+            </small>
             @error('images')
                 <span class="invalid-feedback">{{ $message }}</span>
             @enderror
